@@ -1,4 +1,7 @@
 package net.ict.bodymanager.repository;
 
-public class JoinRepository {
+import net.ict.bodymanager.entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface JoinRepository extends JpaRepository<Member, Long> {
 }

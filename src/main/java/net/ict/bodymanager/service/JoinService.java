@@ -1,4 +1,5 @@
 package net.ict.bodymanager.service;
 
-public class JoinService {
+public interface JoinService {
+  void register(Long member_id);
 }

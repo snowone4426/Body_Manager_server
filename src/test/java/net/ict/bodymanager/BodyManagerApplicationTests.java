@@ -8,6 +8,7 @@ class BodyManagerApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

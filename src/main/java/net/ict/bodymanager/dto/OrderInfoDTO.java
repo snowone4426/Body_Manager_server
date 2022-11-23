@@ -4,15 +4,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PTInfoDTO {
-  private Long pt_id;
-  private Long trainer_id;
-  @NotEmpty
-  private int pt_price;
+public class OrderInfoDTO {
+  private Long order_id;
+  private Long member_id;
+  private LocalDate created_at;
 }
