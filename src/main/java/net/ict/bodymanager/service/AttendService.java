@@ -1,4 +1,4 @@
 package net.ict.bodymanager.service;
 
-public class AttendService {
+public interface AttendService {
 }
