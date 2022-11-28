@@ -13,6 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class LoginServiceImpl implements  LoginService{
-    private final ModelMapper modelMapper;
-    private final LoginRepository loginRepository;
+//    private final ModelMapper modelMapper;
+//    private final LoginRepository loginRepository;
 }

@@ -17,17 +17,17 @@ public class entity {
   @Test
   public void testMember(){
     Member memberEntity = Member.builder()
-            .email("test2@email.com")
+            .email("test3@email.com")
             .password("1234")
-            .name("테스터2")
-            .address("서울 신촌")
-            .phone("01012345679")
-            .gender("male")
-            .height(180.3)
+            .name("테스터3")
+            .address("제주도")
+            .phone("01043215679")
+            .gender("female")
+            .height(320.3)
             .remark("하이염")
-            .birth(LocalDate.of(2022,11,22))
+            .birth(LocalDate.of(2022,11,25))
             .profile("image.jpg")
-            .type("trainer")
+            .type("common")
             .build();
     Member result = joinRepository.save(memberEntity);
     log.info(result);
