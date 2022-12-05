@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
+//회원가입시 값 넣을 DTO
 @Data
 @Builder
 @AllArgsConstructor
@@ -35,10 +37,10 @@ public class MemberDTO {
   @NotEmpty
   private LocalDate birth;
   @NotEmpty
-  private String profile;
+  private List<String> fileNames;
   @NotEmpty
-  private String type;  //dormant(휴면), common, trainer , admin
-
+  private String type; //common, trainer , admin, 미인증, dormant(휴면, 회원 삭제 시)
+//(이메일) 미인증인 사람들은 어떤 권한을 가지고 있냐 : 다 안됨?
   private LocalDateTime created_at;
 
 }
