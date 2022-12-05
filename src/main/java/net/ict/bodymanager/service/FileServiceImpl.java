@@ -12,6 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class FileServiceImpl implements  FileService{
-    private final ModelMapper modelMapper;
-    private final FileRepository fileRepository;
+//    private final ModelMapper modelMapper;
+//    private final FileRepository fileRepository;
 }
