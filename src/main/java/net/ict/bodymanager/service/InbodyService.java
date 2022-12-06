@@ -1,6 +1,7 @@
 package net.ict.bodymanager.service;
 
 import net.ict.bodymanager.dto.InbodyDTO;
+import net.ict.bodymanager.dto.InbodyRequestDTO;
 import net.ict.bodymanager.entity.Inbody;
 import net.ict.bodymanager.entity.Member;
 
@@ -14,6 +15,10 @@ public interface InbodyService {
     void modify(InbodyDTO inbodyDTO);
 
     List<LocalDate> check();
+
+    String musclePart(InbodyRequestDTO inbodyRequestDTO);
+
+    String fatPart(InbodyRequestDTO inbodyRequestDTO);
 
     default Inbody dtoTOEntity(InbodyDTO inbodyDTO, Member member){
         Inbody inbody = Inbody.builder()
