@@ -145,5 +145,31 @@ public class InbodyServiceImpl implements InbodyService {
         return dataFat.toString();
     }
 
+    @Override
+    public String bodyChangeFlow() {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QInbody inbody = QInbody.inbody;
+
+        List<Tuple> changeList = jpaQueryFactory.select(inbody.created_at, inbody.weight, inbody.SMM, inbody.BFM).from(inbody).where(inbody.member.member_id.eq(1l)).fetch();
+
+        String [] name = {"name", "weight", "SMM", "BFM"};
+
+        JSONArray valueArr = new JSONArray();
+
+        for (int i = 0 ; i < changeList.size() ; i++){
+            JSONObject value = new JSONObject();
+            for (int j = 0 ; j < name.length ; j++){
+                value.put(name[j], changeList.get(i).toArray()[j]);
+            }
+            valueArr.put(value);
+        }
+
+        JSONObject data = new JSONObject();
+        data.put("data", valueArr);
+        data.put("message", "ok");
+
+        return data.toString();
+    }
+
 
 }

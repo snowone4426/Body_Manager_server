@@ -20,6 +20,8 @@ public interface InbodyService {
 
     String fatPart(InbodyRequestDTO inbodyRequestDTO);
 
+    String bodyChangeFlow();
+
     default Inbody dtoTOEntity(InbodyDTO inbodyDTO, Member member){
         Inbody inbody = Inbody.builder()
                 .member(member)
