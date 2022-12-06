@@ -17,11 +17,11 @@ public class entity {
   @Test
   public void testMember(){
     Member memberEntity = Member.builder()
-            .email("test1@email.com")
+            .email("test2@email.com")
             .password("1234")
-            .name("테스터1")
+            .name("테스터2")
             .address("서울 신촌")
-            .phone("01012345678")
+            .phone("01012345679")
             .gender("male")
             .height(180.3)
             .remark("하이염")
@@ -134,7 +134,7 @@ public class entity {
   @Test
   public void testPTInfo(){
     PTInfo ptInfo = PTInfo.builder()
-            .trainer(Member.builder().member_id(3l).build())
+            .trainer(Member.builder().member_id(2l).build())
             .pt_price(400000)
             .build();
     PTInfo result = ptInfoRepository.save(ptInfo);
@@ -149,7 +149,7 @@ public class entity {
             .start_date(LocalDate.now())
             .member(Member.builder().member_id(1l).build())
             .pt_total_count(20)
-            .ptInfo(PTInfo.builder().pt_id(3l).build())
+            .ptInfo(PTInfo.builder().pt_id(1l).build())
             .build();
     PTMember result = ptMemberRepository.save(ptMember);
     log.info(result);
@@ -160,7 +160,7 @@ public class entity {
   @Test
   public void testPTProgram(){
     PTProgram ptProgram = PTProgram.builder()
-            .ptMember(PTMember.builder().pt_member_id(2l).build())
+            .ptMember(PTMember.builder().pt_member_id(1l).build())
             .pt_count(5)
             .title("test program")
             .weight(40)
@@ -177,7 +177,7 @@ public class entity {
     Purchase purchase = Purchase.builder()
             .orderInfo(OrderInfo.builder().order_id(1l).build())
             .price(Price.builder().price_id(1l).build())
-            .ptInfo(PTInfo.builder().pt_id(3l).build())
+            .ptInfo(PTInfo.builder().pt_id(1l).build())
             .period(5)
             .build();
     Purchase result = purchaseRepository.save(purchase);
@@ -205,7 +205,7 @@ public class entity {
   public void testMessageRoom(){
     MessageRoom messageRoom = MessageRoom.builder()
             .member(Member.builder().member_id(1l).build())
-            .trainer(Member.builder().member_id(3l).build())
+            .trainer(Member.builder().member_id(2l).build())
             .build();
     MessageRoom result = messageRoomRepository.save(messageRoom);
     log.info(result);

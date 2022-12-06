@@ -27,6 +27,12 @@ public class PTMember {
   @Column(nullable = false)
   private int pt_total_count;
 
+  @Column(nullable = false)
+  private int pt_remain_count;
+
+  @Column(nullable = false)
+  private int pt_present_count;
+
   @ManyToOne
   @JoinColumn(name="pt_id")
   private PTInfo ptInfo;

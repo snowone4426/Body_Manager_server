@@ -1,4 +1,4 @@
 package net.ict.bodymanager.service;
 
-public class FoodService {
+public interface FoodService {
 }

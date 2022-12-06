@@ -16,5 +16,9 @@ public class PTMemberDTO {
   private Long member_id;
   @NotEmpty
   private int pt_total_count;
+  @NotEmpty
+  private int pt_remain_count;
+  @NotEmpty
+  private int pt_present_count;
   private Long pt_id;
 }
