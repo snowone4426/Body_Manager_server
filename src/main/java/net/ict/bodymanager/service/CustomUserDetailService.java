@@ -1,6 +1,9 @@
 package net.ict.bodymanager.service;
 
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
+import net.ict.bodymanager.repository.MemberRepository;
+=======
 import net.ict.bodymanager.dto.MemberDTO;
 import net.ict.bodymanager.dto.MemberListAllDTO;
 import net.ict.bodymanager.dto.PageRequestDTO;
@@ -10,11 +13,25 @@ import net.ict.bodymanager.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+>>>>>>> origin/feat/mail
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
+
+@RequiredArgsConstructor
+@Service
+public class CustomUserDetailService implements UserDetailsService {
+  private final MemberRepository memberRepository;
+
+  @Override
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    return memberRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+  }
+=======
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -114,5 +131,6 @@ public class CustomUserDetailService implements UserDetailsService,MemberService
 
 
 
+>>>>>>> origin/feat/mail
 
 }

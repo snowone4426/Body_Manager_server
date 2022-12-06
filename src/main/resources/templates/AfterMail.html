@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Mail</title>
+</head>
+<body>
+<h1> 인증번호 확인</h1>
+
+<form th:action="@{/mail/check}" method="post">
+    <table>
+        <tr>
+            <td>인증번호</td>
+            <td>
+                <input type="text" name="code" placeholder="인증번호를 입력해주세요.">
+            </td>
+        </tr>
+    </table>
+    <button>확인</button>
+</form>
+</body>
+</html>
