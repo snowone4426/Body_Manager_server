@@ -1,8 +1,10 @@
 package net.ict.bodymanager.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -10,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Inbody extends BaseEntity{
+public class Inbody{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +56,10 @@ public class Inbody extends BaseEntity{
   private double left_leg_fat;
   @Column(nullable = false)
   private double right_leg_fat;
+
+  @CreatedDate
+  @Column(updatable = false)
+  private LocalDate created_at;
+
 
 }

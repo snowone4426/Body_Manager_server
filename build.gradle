@@ -72,6 +72,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 
+    implementation group: 'org.json', name: 'json', version: '20160810'
+
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+
+
 }
 
 tasks.named('test') {

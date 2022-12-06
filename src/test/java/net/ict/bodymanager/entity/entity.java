@@ -145,8 +145,6 @@ public class entity {
             .start_date(LocalDate.now())
             .member(Member.builder().member_id(1l).build())
             .pt_total_count(20)
-            .pt_remain_count(18)
-            .pt_present_count(2)
             .ptInfo(PTInfo.builder().pt_id(1l).build())
             .build();
     PTMember result = ptMemberRepository.save(ptMember);

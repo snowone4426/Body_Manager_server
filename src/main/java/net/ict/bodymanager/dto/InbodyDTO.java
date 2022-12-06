@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class InbodyDTO {
 
-  private Long inbody_id;
-  private Long member_id;
+
   @NotEmpty
   private double weight;
   @NotEmpty
@@ -51,5 +50,5 @@ public class InbodyDTO {
   @NotEmpty
   private double right_leg_fat;
 
-  private LocalDateTime created_at;
+
 }

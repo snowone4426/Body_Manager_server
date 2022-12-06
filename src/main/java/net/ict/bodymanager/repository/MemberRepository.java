@@ -1,6 +1,7 @@
 package net.ict.bodymanager.repository;
 
 
+
 import net.ict.bodymanager.entity.Member;
 import net.ict.bodymanager.repository.search.MemberSearch;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -17,3 +18,4 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberSea
   Optional<Member> findByIdWithImages(Long bno);
 
 }
+
