@@ -2,9 +2,15 @@ package net.ict.bodymanager.entity;
 
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+
+
 
 @Entity
 @Getter
@@ -12,6 +18,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@DynamicInsert
+@DynamicUpdate
 public class Member extends BaseEntity{
 
   @Id
@@ -37,6 +45,9 @@ public class Member extends BaseEntity{
   private LocalDate birth;
   @Column(length = 100, nullable = false)
   private String profile;
-  @Column(length = 10, nullable = false)
+
+//  @Column(length = 20, nullable = false)
+//  @ColumnDefault("common")
+  @Column(columnDefinition = "varchar(20) default 'common'")
   private String type;  //dormant(휴면), common, trainer , admin
 }

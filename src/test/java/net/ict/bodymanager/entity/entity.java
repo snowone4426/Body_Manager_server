@@ -17,17 +17,16 @@ public class entity {
   @Test
   public void testMember(){
     Member memberEntity = Member.builder()
-            .email("test2@email.com")
+            .email("test3@email.com")
             .password("1234")
-            .name("테스터2")
+            .name("테스터3")
             .address("서울 신촌")
-            .phone("01012345679")
+            .phone("01012349999")
             .gender("male")
             .height(180.3)
             .remark("하이염")
             .birth(LocalDate.of(2022,11,22))
             .profile("image.jpg")
-            .type("trainer")
             .build();
     Member result = joinRepository.save(memberEntity);
     log.info(result);
@@ -70,9 +69,7 @@ public class entity {
     Food food = Food.builder()
             .member(Member.builder().member_id(1L).build())
             .time("저녁")
-            .content("test content")
-            .food_img("image.jpg")
-            .grade(1)
+            .content("test 저녁 content")
             .build();
     Food result = foodRepository.save(food);
     log.info(result);
@@ -119,11 +116,10 @@ public class entity {
   @Test
   public void testCabinet(){
     Cabinet cabinet = Cabinet.builder()
-            .cab_num(50)
+            .cab_num(49)
             .start_date(LocalDate.now())
-            .end_date(LocalDate.of(2022, 12, 20))
-            .cab_pwd(0000)
-            .member(Member.builder().member_id(1l).build())
+            .end_date(LocalDate.of(2022, 12, 25))
+            .member(Member.builder().member_id(2l).build())
             .build();
     Cabinet result = cabinetRepository.save(cabinet);
     log.info(result);
