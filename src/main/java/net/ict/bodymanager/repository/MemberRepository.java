@@ -2,6 +2,7 @@ package net.ict.bodymanager.repository;
 
 
 import net.ict.bodymanager.entity.Member;
+<<<<<<< HEAD
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,4 +33,20 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //  @Transactional
 //  @Query("update Member m set m.mpw =:mpw where m.mid = :mid ")
 //  void updatePassword(@Param("mpw") String password, @Param("mid") String mid);
+=======
+import net.ict.bodymanager.repository.search.MemberSearch;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
+
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberSearch {
+  Optional<Member> findByEmail(String email);
+
+  @EntityGraph(attributePaths = {"imageSet"})
+  @Query("select m from Member m where m.member_id =:member_id")
+  Optional<Member> findByIdWithImages(Long bno);
+
+>>>>>>> origin/feat/mail
 }

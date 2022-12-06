@@ -21,7 +21,11 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
+<<<<<<< HEAD
   private String secretKey = "k2y1h1";
+=======
+  private String secretKey = "webfirewood";
+>>>>>>> origin/feat/mail
 
   // 토큰 유효시간 30분
   private long tokenValidTime = 30 * 60 * 1000L;
@@ -43,7 +47,12 @@ public class JwtTokenProvider {
             .setClaims(claims) // 정보 저장
             .setIssuedAt(now) // 토큰 발행 시간 정보
             .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
+<<<<<<< HEAD
             .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과 signature 에 들어갈 secret 값 세팅
+=======
+            .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
+            // signature 에 들어갈 secret값 세팅
+>>>>>>> origin/feat/mail
             .compact();
   }
 
@@ -67,7 +76,10 @@ public class JwtTokenProvider {
   public boolean validateToken(String jwtToken) {
     try {
       Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/feat/mail
       return !claims.getBody().getExpiration().before(new Date());
     } catch (Exception e) {
       return false;

@@ -43,9 +43,16 @@ public class MemberDTO {
   private List<String> fileNames;
 
   @NotEmpty
+<<<<<<< HEAD
   private String type; //common, trainer , admin, 미인증, dormant(회원 삭제 시)
 //(이메일) 미인증인 사람들은 어떤 권한을 가지고 있냐 : 다 안됨?
 
+=======
+  private List<String> fileNames;
+  @NotEmpty
+  private String type; //common, trainer , admin, 미인증, dormant(휴면, 회원 삭제 시)
+//(이메일) 미인증인 사람들은 어떤 권한을 가지고 있냐 : 다 안됨?
+>>>>>>> origin/feat/mail
   private LocalDateTime created_at;
 
 
