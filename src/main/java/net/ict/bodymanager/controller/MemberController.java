@@ -2,26 +2,23 @@ package net.ict.bodymanager.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.ict.bodymanager.dto.MemberDTO;
 import net.ict.bodymanager.entity.Member;
 import net.ict.bodymanager.filter.JwtTokenProvider;
 import net.ict.bodymanager.repository.MemberRepository;
+import net.ict.bodymanager.service.MemberService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/initial")
 @Log4j2
 public class MemberController {
 
@@ -29,37 +26,92 @@ public class MemberController {
   private String uploadPath;
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
-  private final MemberRepository userRepository;
-  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private final MemberRepository memberRepository;
+  private final MemberService memberService;
+
   // 회원가입
-  @PostMapping(value = "/join" , consumes = MediaType.APPLICATION_JSON_VALUE)
-  public Long join(@RequestBody Map<String, String> user) {
-//    return userRepository.save(Member.builder()
-//            .email(user.get("email"))
-//            .password(passwordEncoder.encode(user.get("password")))
-//            .name(user.get("name"))
-//            .address(user.get("address"))
-//            .phone(user.get("phone"))
-//            .gender(user.get("gender"))
-//            .height(Double.parseDouble(user.get("height")))
-//            .remark(user.get("remark"))
-//            .profile(user.get("profile"))
-//            .birth(LocalDate.parse((user.get("birth")),formatter))
-//            .type("0")
-//            .roles(Collections.singletonList("ROLE_USER")) // 최초 가입시 USER 로 설정
-//            .build()).getMember_id();
-    Map<String,String> result = Map.of("message","ok");
+  @PostMapping(value = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> join(@RequestBody MemberDTO memberDTO) {
+    //비동기 통신으로 받아줘야하니까 @RequestBody를 사용
+    Long member_id = memberService.register(memberDTO);
+    Map<String, String> result = Map.of("message", "ok");
     return ResponseEntity.ok(result);
+  }
+
+  //이메일 중복체크
+  @PostMapping(value = "/emailcheck", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> emailDuple(@RequestBody Member member) {
+    memberRepository.existsByEmail(member.getEmail());
+    if (memberRepository.existsByEmail(member.getEmail())) {
+      Map<String, String> result = Map.of("message", "duplicate");
+      return ResponseEntity.ok(result);
+    } else {
+      Map<String, String> result = Map.of("message", "ok");
+      return ResponseEntity.ok(result);
+    }
+  }
+
+  //휴대폰 번호 중복체크
+  @PostMapping(value = "/phonecheck", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> phoneDuple(@RequestBody Member member) {
+    memberRepository.existsByPhone(member.getPhone());
+    if (memberRepository.existsByPhone(member.getPhone())) {
+      Map<String, String> result = Map.of("message", "duplicate");
+      return ResponseEntity.ok(result);
+    } else {
+      Map<String, String> result = Map.of("message", "ok");
+      return ResponseEntity.ok(result);
+    }
   }
 
   // 로그인
   @PostMapping("/login")
-  public String login(@RequestBody Map<String, String> user) {
-//    Member member = userRepository.findByEmail(user.get("email"))
-//            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
-//    if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
-//      throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-//    }
-//    return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+  public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> user , HttpServletResponse response) {
+    Member member = memberRepository.findByEmail(user.get("email"))
+            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+    if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
+      throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+    }
+    String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+
+    response.setHeader("X-AUTH-TOKEN" , token);   //헤더 "X-AUTH-TOKEN" 에 토큰 값 저장
+
+
+    Cookie cookie = new Cookie("X-AUTH-TOKEN", token);  //쿠키에 저장
+
+    System.out.println("cookie 넣기 전 value : "+cookie.getValue());
+
+    cookie.setPath("/");
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+    cookie.setMaxAge(30*60);
+    response.addCookie(cookie);
+
+    System.out.println("cookie.getValue()"+cookie.getValue());
+
+    Map<String, String> result = Map.of("message", "ok");
+    return ResponseEntity.ok(result);
   }
+
+  //로그아웃 미구현
+  @GetMapping("/logout")
+  public void logout(HttpServletResponse response){
+    Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
+    cookie.setHttpOnly(true);
+    cookie.setSecure(false);
+    cookie.setMaxAge(0);
+    cookie.setPath("/");
+    response.addCookie(cookie);
+    System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    System.out.println("로그아웃");
+    System.out.println("cookie.getValue()"+cookie.getValue());
+    System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+  }
+
+  //이메일 찾기
+  @PostMapping("/findEmail")
+  public String findEmail(@RequestBody Map<String, Object > map){
+    return memberService.findEmail(String.valueOf(map.get("phone")), String.valueOf(map.get("name")));
+  }
+
 }

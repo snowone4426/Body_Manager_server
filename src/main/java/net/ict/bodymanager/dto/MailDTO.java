@@ -1,4 +1,5 @@
 package net.ict.bodymanager.dto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,8 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class MailDTO {
-  private String address;
-  private String title;
-  private String content;
-  private String code;
+    private String email;
+    private String code;
+    private String password;
 }
