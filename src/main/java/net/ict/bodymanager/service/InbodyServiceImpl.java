@@ -194,6 +194,29 @@ public class InbodyServiceImpl implements InbodyService {
         return data.toString();
     }
 
+    @Override
+    public String inbodyList() {
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QInbody inbodyList = QInbody.inbody;
+
+        // 로그인 아이디
+        List<Tuple> inbodySelect = jpaQueryFactory.select(inbodyList.weight, inbodyList.SMM, inbodyList.BFM, inbodyList.BMI, inbodyList.PBF, inbodyList.WHR, inbodyList.BMR, inbodyList.body_muscle, inbodyList.left_hand_muscle, inbodyList.right_hand_muscle, inbodyList.left_leg_muscle, inbodyList.right_leg_muscle, inbodyList.body_fat, inbodyList.left_hand_fat ,inbodyList.right_hand_fat, inbodyList.left_leg_fat, inbodyList.right_leg_fat).from(inbodyList).where(inbodyList.member.member_id.eq(3l).and(inbodyList.created_at.eq(LocalDate.now()))).fetch();
+
+        String [] name = {"weight", "SMM", "BFM", "BMI", "PBF", "WHR", "BMR", "body_muscle", "left_hand_muscle", "right_hand_muscle", "left_leg_muscle", "right_leg_muscle", "body_fat", "left_hand_fat", "right_hand_fat", "left_leg_fat", "right_leg_fat"};
+
+        JSONObject inbodyData = new JSONObject();
+
+        for (int i = 0 ; i < name.length ; i++){
+            inbodyData.put(name[i], inbodySelect.get(0).toArray()[i]);
+        }
+        JSONObject data = new JSONObject();
+        data.put("data", inbodyData);
+        data.put("message", "ok");
+
+        return data.toString();
+    }
+
 
 
 }

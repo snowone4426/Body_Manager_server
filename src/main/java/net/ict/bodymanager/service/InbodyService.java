@@ -24,6 +24,8 @@ public interface InbodyService {
 
     String inbodyInfo();
 
+    String inbodyList();
+
     default Inbody dtoTOEntity(InbodyDTO inbodyDTO, Member member){
         Inbody inbody = Inbody.builder()
                 .member(member)

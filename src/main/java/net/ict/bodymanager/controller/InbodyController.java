@@ -68,6 +68,9 @@ public class InbodyController {
         return inbodyService.inbodyInfo();
     }
 
-
+    @PostMapping(value = "/in5")
+    public String todayList(){
+        return inbodyService.inbodyList();
+    }
 
 }
