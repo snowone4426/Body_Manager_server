@@ -62,5 +62,12 @@ public class InbodyController {
         return inbodyService.bodyChangeFlow();
     }
 
+    @Valid
+    @GetMapping("/in4")
+    public String info(){
+        return inbodyService.inbodyInfo();
+    }
+
+
 
 }

@@ -171,5 +171,29 @@ public class InbodyServiceImpl implements InbodyService {
         return data.toString();
     }
 
+    @Override
+    public String inbodyInfo() {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QInbody inbody = QInbody.inbody;
+
+
+        List<Tuple> inbodyList = jpaQueryFactory.select(inbody.weight, inbody.SMM, inbody.BFM, inbody.BMI, inbody.PBF, inbody.WHR, inbody.BMR)
+                .from(inbody).where(inbody.member.member_id.eq(1l)).fetch();
+
+        String [] name = {"weight", "SMM", "BFM", "BMI", "PBF", "WHR", "BMR"};
+
+        JSONObject value = new JSONObject();
+        for (int i = 0; i < name.length ; i++){
+            value.put(name[i], inbodyList.get(0).toArray()[i]);
+        }
+
+        JSONObject data = new JSONObject();
+        data.put("data", value);
+        data.put("message", "ok");
+
+        return data.toString();
+    }
+
+
 
 }
