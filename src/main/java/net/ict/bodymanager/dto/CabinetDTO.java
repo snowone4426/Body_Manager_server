@@ -26,7 +26,7 @@ public class CabinetDTO {
   @NotEmpty
   private LocalDate end_date;
   @NotEmpty
-  private int cab_pwd;
+  private String cab_pwd;
 
   private Long member_id;
 

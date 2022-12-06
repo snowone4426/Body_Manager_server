@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -15,13 +17,15 @@ import java.time.LocalDate;
 public class PTProgramDTO {
   private Long program_id;
   private Long pt_member_id;
-  @NotEmpty
+  @NotNull
   private int pt_count;
   @NotEmpty
   private String title;
-  @NotEmpty
+  @NotNull
   private double weight;
-  @NotEmpty
+  @NotNull
   private int count;
-  private LocalDate created_at;
+  @NotEmpty
+  private LocalDateTime pt_date;
+
 }
