@@ -16,7 +16,7 @@ public class Cabinet {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long cab_id;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private int cab_num;
 
   @Column(nullable = false)

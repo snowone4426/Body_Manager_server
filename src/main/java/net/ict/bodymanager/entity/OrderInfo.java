@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderInfo extends BaseEntity{
+public class OrderInfo{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +21,8 @@ public class OrderInfo extends BaseEntity{
   @ManyToOne
   @JoinColumn(name="member_id")
   private Member member;
+
+  @Column
+  private LocalDateTime created_at;
+
 }
