@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
@@ -17,6 +18,5 @@ public class AttendDTO {
   private Long member_id;
   @NotEmpty
   private LocalDateTime start_date;
-  @NotEmpty
   private LocalDateTime end_date;
 }
