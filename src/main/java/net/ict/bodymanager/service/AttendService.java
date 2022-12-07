@@ -8,7 +8,7 @@ public interface AttendService {
     void register(AttendDTO attendDTO);
 //    void register(Attend attend);
     String readDay();
-    void modify();
+//    void modify();
     String readMonth(String year,String month);
 
     default Attend dtoToEntity(AttendDTO attendDTO, Member member){

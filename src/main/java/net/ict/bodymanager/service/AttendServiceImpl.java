@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -46,59 +47,96 @@ public class AttendServiceImpl implements AttendService {
     @Override
     public void register(AttendDTO attendDTO) {
 
-//     log.info("***********attendDTO...service : " +attendDTO); //2
-//        Attend attend = modelMapper.map(attendDTO,Attend.class);
-//        log.info("***********attend....service : " +attend); //null
         Member member = memberRepository.getById(1l);
 
-        Attend attend = dtoToEntity(attendDTO, member);
+        QAttend qattend = QAttend.attend;
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        List<LocalDateTime> select = queryFactory
+                .select(qattend.end_date)
+                .from(attend)
+                .orderBy(qattend.start_date.desc())
+                .where(qattend.end_date.isNull().and(qattend.member.member_id.eq((member.getMember_id()))))
+                .limit(1)
+                .fetch();
+        log.info("===================================="+select);
 
-        attendRepository.save(attend);
-
-//        JSONObject object = new JSONObject();
-//        object.put("message","ok");
-    }
-    @Override
-    public void modify() {
-        Member member = memberRepository.getById(3l);
-
-//        LocalDate date = LocalDate.now();
-//        LocalTime time = LocalTime.of(00, 00, 00);
-//
-//
-//        LocalDateTime today = LocalDateTime.of(date, time);
-
-//        attendRepository.updateDate(LocalDateTime.now(), member.getMember_id(), today);
-        attendRepository.updateDate(LocalDateTime.now(), member.getMember_id());
-
+        if(select.isEmpty()) {
+            Attend attend = dtoToEntity(attendDTO, member);
+            attendRepository.save(attend);
+        }
+        else {
+            attendRepository.updateDate(LocalDateTime.now(), member.getMember_id());
+        }
 
     }
+//    @Override
+//    public void modify() {
+//        Member member = memberRepository.getById(3l);
+//
+////        LocalDate date = LocalDate.now();
+////        LocalTime time = LocalTime.of(00, 00, 00);
+////
+////
+////        LocalDateTime today = LocalDateTime.of(date, time);
+//
+////        attendRepository.updateDate(LocalDateTime.now(), member.getMember_id(), today);
+//        attendRepository.updateDate(LocalDateTime.now(), member.getMember_id());
+//
+//    }
 
 
     @Override
     public String readDay() {
+
+        QAttend attend = QAttend.attend;
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        StringTemplate startdateFormat = Expressions.stringTemplate("DATE_FORMAT( {0}, {1} )", attend.start_date, ConstantImpl.create("%Y-%m-%d"));
+        StringTemplate enddateFormat = Expressions.stringTemplate("DATE_FORMAT( {0}, {1} )", attend.end_date, ConstantImpl.create("%Y-%m-%d"));
+
+        List<Tuple> readday = queryFactory
+                .select(startdateFormat, enddateFormat)
+                .from(attend)
+                .where(startdateFormat.eq(String.valueOf(LocalDate.now())).and(attend.member.member_id.eq(3l)))
+                .fetch();
+        log.info(readday);
+
         JSONObject object = null;
         JSONArray jsonArray = new JSONArray();
-
-        for(int i=0;i<attendRepository.list().size();i++) {
-            object =  new JSONObject();
-
-           if(attendRepository.list().get(i).getEnd_date()!=null) {
-               object.put("start_date", attendRepository.list().get(i).getStart_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-               object.put("end_date", attendRepository.list().get(i).getEnd_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-           }
-           else{
-               object.put("start_date", attendRepository.list().get(i).getStart_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-               object.put("end_date", "");
-            }
+        for(int i=0;i<readday.size();i++){
+            object = new JSONObject();
+            object.put("start_time", readday.get(i).toArray()[0].toString());
+            object.put("end_time", readday.get(i).toArray()[1].toString());
 
             jsonArray.put(object);
-
         }
+
         JSONObject data = new JSONObject();
-        data.put("data", jsonArray);
-        data.put("message", "ok");
+        data.put("data", object);
+        data.put("message","ok");
+
         return data.toString();
+//        Member member = memberRepository.getById(3l);
+//        attendRepository.list(attend.start_date,member.getMember_id());
+//
+//        for(int i=0;i<attendRepository.list().size();i++) {
+//            object =  new JSONObject();
+//
+//           if(attendRepository.list().get(i).getEnd_date()!=null) {
+//               object.put("start_date", attendRepository.list().get(i).getStart_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//               object.put("end_date", attendRepository.list().get(i).getEnd_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//           }
+//           else{
+//               object.put("start_date", attendRepository.list().get(i).getStart_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//               object.put("end_date", "");
+//            }
+//
+//            jsonArray.put(object);
+//
+//        }
+//        JSONObject data = new JSONObject();
+//        data.put("data", jsonArray);
+//        data.put("message", "ok");
+//        return data.toString();
     }
 
 

@@ -18,30 +18,24 @@ public class AttendController {
     private final ModelMapper modelMapper;
     private final AttendService attendService;
 
-
     @PostMapping(value = "/register")
     public ResponseEntity<Map<String,Object>> register(){
-//        Attend attend = new Attend();
-//        AttendDTO attendDTO = new AttendDTO();
-//        attend = Attend.builder().member(Member.builder().member_id(1l).build()).build();
-//        log.info("***********a : " + attend.getMember().getMember_id()); //2
-//        attend.setStart_date(LocalDateTime.now());
-//        attend.setMember_id(a.getMember().getMember_id()); // 실제로는 로그인 정보에서 아이디 따오기
-//        log.info("***********attendDTO : " + attendDTO.getMember_id()); //2
-//        JSONObject result = new JSONObject();
+
         AttendDTO attendDTO = new AttendDTO();
         attendService.register(attendDTO);
-        Map<String,Object> result = Map.of("message","ok");
+
+        Map<String,Object> result
+                = Map.of("message","ok");
         log.info(result);
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping(value ="/modify")  //, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>>modify(){
-        attendService.modify();
-        Map<String,String> result = Map.of("message","ok");
-        return ResponseEntity.ok(result);
-    }
+//    @PostMapping(value ="/modify")  //, consumes = MediaType.APPLICATION_JSON_VALUE) 퇴장
+//    public ResponseEntity<Map<String, String>>modify(){
+//        attendService.modify();
+//        Map<String,String> result = Map.of("message","ok");
+//        return ResponseEntity.ok(result);
+//    }
 
     @GetMapping(value = "/readDay")
     public String readDay(){
