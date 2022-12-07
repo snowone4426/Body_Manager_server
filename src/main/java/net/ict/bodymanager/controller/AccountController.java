@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.ict.bodymanager.service.AccountService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/account")
@@ -26,5 +28,11 @@ public class AccountController {
     public String priceInfo(){
         return accountService.infoList();
     }
+
+    @GetMapping("/ac3")
+    public String orderList(@RequestBody Map<String, Object> page){
+        return accountService.orderList();
+    }
+
 
 }

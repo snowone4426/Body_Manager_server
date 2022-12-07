@@ -1,6 +1,7 @@
 package net.ict.bodymanager.service;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -94,6 +96,82 @@ public class AccountServiceImpl implements AccountService {
         return data.toString();
     }
 
+    @Override
+    public String orderList() {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+
+        QPurchase purchase = QPurchase.purchase;
+        QPrice price = QPrice.price;
+        QOrderInfo orderInfo = QOrderInfo.orderInfo;
+        QPTInfo ptInfo = QPTInfo.pTInfo;
+        QPTMember ptMember = QPTMember.pTMember;
+
+        StringTemplate dateFormat = Expressions.stringTemplate("DATE_FORMAT( {0}, {1} )", orderInfo.created_at, ConstantImpl.create("%Y-%m-%d"));
+
+        List<Tuple> count = jpaQueryFactory.select(dateFormat, orderInfo.order_id).from(orderInfo).where(orderInfo.member.member_id.eq(4l)).offset(0).limit(10).orderBy(dateFormat.desc()).fetch();
+
+        List<String> dateList = jpaQueryFactory.select(dateFormat).distinct().from(orderInfo).where(orderInfo.member.member_id.eq(4l))
+                .orderBy(dateFormat.asc()).fetch();
+
+        List<Tuple> priceOrder = jpaQueryFactory.select(dateFormat, price.price_name, price.price_info, purchase.orderInfo.order_id)
+                .from(purchase).join(purchase.orderInfo, orderInfo).join(purchase.price, price)
+                .where(orderInfo.member.member_id.eq(4l))
+                .fetch();
+
+        List<Tuple> ptOrder = jpaQueryFactory.select(dateFormat, ptMember.pt_total_count, ptInfo.pt_price, purchase.orderInfo.order_id)
+                .from(ptMember)
+                .join(ptMember.ptInfo, ptInfo)
+                .leftJoin(orderInfo).on(ptMember.member.member_id.eq(orderInfo.member.member_id))
+                .leftJoin(purchase).on(ptMember.ptInfo.pt_id.eq(purchase.ptInfo.pt_id))
+                .where(orderInfo.member.member_id.eq(4l).and(purchase.orderInfo.order_id.eq(orderInfo.order_id)))
+                .fetch();
+
+        JSONArray orderArr = null;
+
+        JSONObject orderObj = null;
+
+        JSONObject dateObj = new JSONObject();
+
+        JSONObject data = new JSONObject();
+
+        for (int i = 0 ; i < dateList.size() ; i++) {
+
+            if (LocalDate.parse(dateList.get(i)).isAfter(LocalDate.parse(count.get(9).toArray()[0].toString())) || LocalDate.parse(dateList.get(i)).isEqual(LocalDate.parse(count.get(9).toArray()[0].toString())) ) {
+
+                orderArr = new JSONArray();
+
+                for (int j = 0; j < priceOrder.size(); j++) {
+
+                    for (int n = 0; n < count.size(); n++) {
+                        if (count.get(n).toArray()[0].toString().equals(dateList.get(i)) && count.get(n).toArray()[1].toString().equals(priceOrder.get(j).toArray()[3].toString())) {
+                            orderObj = new JSONObject();
+                            orderObj.put("sub_type", priceOrder.get(j).toArray()[1]);
+                            orderObj.put("price_info", priceOrder.get(j).toArray()[2]);
+                            orderArr.put(orderObj);
+                        }
+                        dateObj.put(dateList.get(i), orderArr);
+                    }
+                }
+
+                for (int m = 0; m < ptOrder.size(); m++) {
+
+                    for (int a = 0; a < count.size(); a++) {
+                        if (count.get(a).toArray()[0].toString().equals(dateList.get(i)) && count.get(a).toArray()[1].toString().equals(ptOrder.get(m).toArray()[3].toString())) {
+                            orderObj = new JSONObject();
+                            orderObj.put("sub_type", "pt " + ptOrder.get(m).toArray()[1] + "회");
+                            orderObj.put("price_info", ptOrder.get(m).toArray()[2]);
+                            orderArr.put(orderObj);
+                        }
+                        dateObj.put(dateList.get(i), orderArr);
+                    }
+                }
+            }
+        }
+        data.put("data", dateObj);
+        data.put("message", "ok");
+
+        return data.toString();
+    }
 
 
 }
