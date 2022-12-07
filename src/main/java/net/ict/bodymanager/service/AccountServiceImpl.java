@@ -7,8 +7,9 @@ import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.ict.bodymanager.dto.OrderListDTO;
 import net.ict.bodymanager.entity.*;
-import net.ict.bodymanager.repository.AccountRepository;
+import net.ict.bodymanager.repository.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class AccountServiceImpl implements AccountService {
+
+    private final OrderRepository orderRepository;
+    private final PriceRepository priceRepository;
+    private final PTMemberRepository ptMemberRepository;
+    private final PTInfoRepository ptInfoRepository;
+    private final SubscribeRepository subscribeRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final MemberRepository memberRepository;
+    private final CabinetRepository cabinetRepository;
 
     @Autowired
     EntityManager entityManager;
@@ -43,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
         List<Tuple> memList = jpaQueryFactory.select(attend.end_date, ptMember.pt_remain_count).from(attend, ptMember).where(attend.member.member_id.eq(1l)).fetch();
 
         JSONObject memberIn = new JSONObject();
-        memberIn.put("end-date", memList.get(0).toArray()[0].toString().substring(0,10));
+        memberIn.put("end-date", memList.get(0).toArray()[0].toString().substring(0, 10));
         memberIn.put("pt-count", memList.get(0).toArray()[1]);
 
         JSONObject dataMember = new JSONObject();
@@ -70,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
         JSONArray priceArr = new JSONArray();
         JSONArray ptArr = new JSONArray();
 
-        for (int i = 0; i < priceList.size(); i++){
+        for (int i = 0; i < priceList.size(); i++) {
             JSONObject priceInfo = new JSONObject();
             priceInfo.put("price_id", priceList.get(i).toArray()[0]);
             priceInfo.put("price_name", priceList.get(i).toArray()[1]);
@@ -78,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
             priceArr.put(priceInfo);
         }
 
-        for (int i = 0; i < ptInfoList.size(); i++){
+        for (int i = 0; i < ptInfoList.size(); i++) {
             JSONObject pt_Info = new JSONObject();
             pt_Info.put("pt_id", ptInfoList.get(i).toArray()[0]);
             pt_Info.put("trainer_name", ptInfoList.get(i).toArray()[1]);
@@ -134,9 +144,9 @@ public class AccountServiceImpl implements AccountService {
 
         JSONObject data = new JSONObject();
 
-        for (int i = 0 ; i < dateList.size() ; i++) {
+        for (int i = 0; i < dateList.size(); i++) {
 
-            if (LocalDate.parse(dateList.get(i)).isAfter(LocalDate.parse(count.get(9).toArray()[0].toString())) || LocalDate.parse(dateList.get(i)).isEqual(LocalDate.parse(count.get(9).toArray()[0].toString())) ) {
+            if (LocalDate.parse(dateList.get(i)).isAfter(LocalDate.parse(count.get(9).toArray()[0].toString())) || LocalDate.parse(dateList.get(i)).isEqual(LocalDate.parse(count.get(9).toArray()[0].toString()))) {
 
                 orderArr = new JSONArray();
 
@@ -174,4 +184,112 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    @Override
+    public void orderRegister(OrderListDTO orderListDTO) {
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QPurchase qpurchase = QPurchase.purchase;
+        QCabinet qcabinet = QCabinet.cabinet;
+        QSubscribe qsubscribe = QSubscribe.subscribe;
+        QPTMember qptMember = QPTMember.pTMember;
+
+        List<Tuple> mem_end = jpaQueryFactory.select(qsubscribe.membership_end, qsubscribe.member.member_id).from(qsubscribe).where(qsubscribe.member.member_id.eq(2l)).orderBy(qsubscribe.membership_end.desc()).fetch();
+
+        List<Tuple> suit_end = jpaQueryFactory.select(qsubscribe.suit_end, qsubscribe.member.member_id).from(qsubscribe).where(qsubscribe.member.member_id.eq(2l)).orderBy(qsubscribe.suit_end.desc()).fetch();
+
+        List<Tuple> cab = jpaQueryFactory.select(qcabinet.end_date, qcabinet.member.member_id).from(qcabinet).where(qcabinet.member.member_id.eq(2l)).orderBy(qcabinet.end_date.desc()).fetch();
+
+        List<Tuple> ptMem = jpaQueryFactory.select(qptMember.start_date, qptMember.pt_total_count, qptMember.pt_remain_count, qptMember.member.member_id).from(qptMember).where(qptMember.member.member_id.eq(2l)).orderBy(qptMember.start_date.desc()).fetch();
+
+        LocalDate today = LocalDate.now();
+
+        JSONObject order_list = new JSONObject(orderListDTO);
+        JSONArray array = (JSONArray) order_list.get("order_list");
+
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject result = array.getJSONObject(i);
+            String id = result.getString("id");
+            String type = result.getString("type");
+            String count = result.getString("count");
+            String start = result.getString("start");
+
+            OrderListDTO.OrderRequestDTO o = new OrderListDTO.OrderRequestDTO();
+            o.setId(id);
+            o.setType(type);
+            o.setCount(count);
+            o.setStart(start);
+
+            // 멤버아이디 로그인 받아오기
+            Member member = memberRepository.getById(2l);
+            PTInfo ptInfo = ptInfoRepository.getById(Long.valueOf(id));
+            Price price = priceRepository.getById(Long.valueOf(id));
+
+            OrderInfo orderInfo = dtoToEntityOrderInfo(o, member);
+            orderRepository.save(orderInfo);
+
+            if (type.equals("price")) {
+
+                Purchase purchase = dtoToEntityPurchase(o, ptInfo, orderInfo, price);
+                purchaseRepository.save(purchase);
+
+                if (suit_end.isEmpty() && Long.valueOf(id) == 4) {
+                    Subscribe subscribe = dtoToEntitySub(o, member);
+                    subscribeRepository.save(subscribe);
+
+                } else if (mem_end.isEmpty() && (Long.valueOf(id) != 5 && Long.valueOf(id) != 4)) {
+                    Subscribe subscribe = dtoToEntitySub(o, member);
+                    subscribeRepository.save(subscribe);
+
+                } else if (cab.isEmpty() && Long.valueOf(id) == 5) {
+                    Cabinet cabinet = dtoToEntityCab(o, member);
+                    cabinetRepository.save(cabinet);
+
+                } else if ((mem_end.get(0).toArray()[1] == member.getMember_id()) && (Long.valueOf(id) != 5 && Long.valueOf(id) != 4) && mem_end.get(0).toArray()[0] == null) {
+                    subscribeRepository.updateMemShip_before(LocalDate.parse(start).plusMonths(Long.parseLong(count)), LocalDate.parse(start), member.getMember_id());
+
+                } else if ((mem_end.get(0).toArray()[1] == member.getMember_id()) && (Long.valueOf(id) != 5 && Long.valueOf(id) != 4) && LocalDate.parse(mem_end.get(0).toArray()[0].toString()).isBefore(today)) {
+                    subscribeRepository.updateMemShip_before(LocalDate.parse(start).plusMonths(Long.parseLong(count)), LocalDate.parse(start), member.getMember_id());
+
+                } else if ((mem_end.get(0).toArray()[1] == member.getMember_id()) && (Long.valueOf(id) != 5 && Long.valueOf(id) != 4) && (LocalDate.parse(mem_end.get(0).toArray()[0].toString()).isAfter(today) || LocalDate.parse(mem_end.get(0).toArray()[0].toString()).isEqual(today))) {
+                    subscribeRepository.updateMemShip_after(LocalDate.parse(mem_end.get(0).toArray()[0].toString()).plusMonths((Long.parseLong(count))), member.getMember_id());
+
+                } else if ((suit_end.get(0).toArray()[1] == member.getMember_id()) && Long.valueOf(id) != 5 && suit_end.get(0).toArray()[0] == null) {
+                    subscribeRepository.updateSuit_before(LocalDate.parse(start).plusMonths(Long.parseLong(count)), LocalDate.parse(start), member.getMember_id());
+
+                } else if ((suit_end.get(0).toArray()[1] == member.getMember_id()) && Long.valueOf(id) != 5 && LocalDate.parse(suit_end.get(0).toArray()[0].toString()).isBefore(today)) {
+                    subscribeRepository.updateSuit_before(LocalDate.parse(start).plusMonths(Long.parseLong(count)), LocalDate.parse(start), member.getMember_id());
+
+                } else if ((suit_end.get(0).toArray()[1] == member.getMember_id()) && Long.valueOf(id) != 5 && (LocalDate.parse(suit_end.get(0).toArray()[0].toString()).isAfter(today) || LocalDate.parse(suit_end.get(0).toArray()[0].toString()).isEqual(today))) {
+                    subscribeRepository.updateSuit_after(LocalDate.parse(suit_end.get(0).toArray()[0].toString()).plusMonths((Long.parseLong(count))), member.getMember_id());
+
+                } else if ((cab.get(0).toArray()[1] == member.getMember_id()) && Long.valueOf(id) == 5 && LocalDate.parse(cab.get(0).toArray()[0].toString()).isBefore(today)) {
+                    cabinetRepository.updateCab_before(LocalDate.parse(start).plusMonths(Long.parseLong(count)), LocalDate.parse(start), member.getMember_id());
+
+                } else if ((cab.get(0).toArray()[1] == member.getMember_id()) && Long.valueOf(id) == 5 && (LocalDate.parse(cab.get(0).toArray()[0].toString()).isAfter(today) || LocalDate.parse(cab.get(0).toArray()[0].toString()).isEqual(today))) {
+                    cabinetRepository.updateCab_after(LocalDate.parse(cab.get(0).toArray()[0].toString()).plusMonths((Long.parseLong(count))), member.getMember_id());
+                }
+
+            } else if (type.equals("pt")) {
+
+                Purchase purchase = dtoToEntityPurchase(o, ptInfo, orderInfo, price);
+                purchaseRepository.save(purchase);
+
+                if (ptMem.isEmpty()) {
+                    PTMember ptMember = dtoToEntityPTMember(o, member, ptInfo);
+                    ptMemberRepository.save(ptMember);
+
+                } else if (ptMem.get(0).toArray()[3] == member.getMember_id() && ptMem.get(0).toArray()[2].toString().equals("0")) {
+                    ptMemberRepository.updatePt_before(LocalDate.parse(start), Integer.parseInt(count), Integer.parseInt(count), member.getMember_id());
+
+                } else if (ptMem.get(0).toArray()[3] == member.getMember_id() && ptMem.get(0).toArray()[2].toString() != "0") {
+                    int count_result = Integer.parseInt(ptMem.get(0).toArray()[2].toString()) + Integer.parseInt(count);
+                    ptMemberRepository.updatePt_after(count_result, count_result, member.getMember_id());
+                }
+
+            }
+
+        }
+
+
+    }
 }
