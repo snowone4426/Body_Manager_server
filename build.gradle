@@ -73,7 +73,16 @@ dependencies {
     implementation 'net.coobird:thumbnailator:0.4.16'
 
     implementation group: 'org.json', name: 'json', version: '20160810'
+
+
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    implementation 'net.coobird:thumbnailator:0.4.16'
+
+    implementation group: 'org.json', name: 'json', version: '20160810'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {

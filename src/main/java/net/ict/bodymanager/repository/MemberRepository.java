@@ -1,6 +1,5 @@
 package net.ict.bodymanager.repository;
 
-
 import net.ict.bodymanager.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,3 +32,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //  @Query("update Member m set m.mpw =:mpw where m.mid = :mid ")
 //  void updatePassword(@Param("mpw") String password, @Param("mid") String mid);
 }
+
