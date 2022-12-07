@@ -11,14 +11,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 public class Price {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long price_id;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long price_id;
+    @Column(nullable = false)
+    private String price_name;
 
-  @Column(nullable = false)
-  private String price_name;
-
-  @Column(nullable = false)
-  private int price_info;
+    @Column(nullable = false)
+    private int price_info;
 }

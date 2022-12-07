@@ -1,4 +1,5 @@
 package net.ict.bodymanager.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,8 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PTInfoDTO {
-  private Long pt_id;
-  private Long trainer_id;
-  @NotEmpty
-  private int pt_price;
+    private Long pt_id;
+    private Long trainer_id;
+    @NotEmpty
+    private int pt_price;
 }

@@ -12,13 +12,13 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PTMemberDTO {
-  private Long pt_member_id;
-  private Long member_id;
-  @NotEmpty
-  private int pt_total_count;
-  @NotEmpty
-  private int pt_remain_count;
-  @NotEmpty
-  private int pt_present_count;
-  private Long pt_id;
+    private Long pt_member_id;
+    private Long member_id;
+    @NotEmpty
+    private int pt_total_count;
+    @NotEmpty
+    private int pt_remain_count;
+    @NotEmpty
+    private int pt_present_count;
+    private Long pt_id;
 }

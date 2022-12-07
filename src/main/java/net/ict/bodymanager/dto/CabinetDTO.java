@@ -4,14 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.ict.bodymanager.entity.Member;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -19,13 +15,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CabinetDTO {
   private Long cab_id;
-  @NotEmpty
+  @NotNull
   private int cab_num;
   @NotEmpty
   private LocalDate start_date;
-  @NotEmpty
+
   private LocalDate end_date;
-  @NotEmpty
+  @NotNull
   private int cab_pwd;
 
   private Long member_id;

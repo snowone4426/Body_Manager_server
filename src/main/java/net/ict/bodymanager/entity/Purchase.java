@@ -12,22 +12,22 @@ import javax.persistence.*;
 @ToString
 public class Purchase {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long purchase_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long purchase_id;
 
-  @ManyToOne
-  @JoinColumn(name="order_id")
-  private OrderInfo orderInfo;
+    @ManyToOne
+    @JoinColumn(name="order_id")
+    private OrderInfo orderInfo;
 
-  @ManyToOne
-  @JoinColumn(name="price_id")
-  private Price price;
+    @ManyToOne
+    @JoinColumn(name="price_id")
+    private Price price;
 
-  @ManyToOne
-  @JoinColumn(name="pt_id")
-  private PTInfo ptInfo;
+    @ManyToOne
+    @JoinColumn(name="pt_id")
+    private PTInfo ptInfo;
 
-  @Column(nullable = false)
-  private int period; //몇달 남았는지
+    @Column(nullable = false)
+    private int period; //몇달 남았는지
 }

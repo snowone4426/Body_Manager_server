@@ -1,9 +1,10 @@
 package net.ict.bodymanager.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -11,17 +12,24 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class MessageRoom extends BaseEntity{
+public class MessageRoom {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long room_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roomId;
 
-  @ManyToOne
-  @JoinColumn(name="member_id")
-  private Member member;
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
-  @ManyToOne
-  @JoinColumn(name="trainer_id")
-  private Member trainer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member memberId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="trainer_id")
+    private Member trainerId;
+
+
+
 }

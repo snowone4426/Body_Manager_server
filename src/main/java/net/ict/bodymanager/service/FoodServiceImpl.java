@@ -30,6 +30,7 @@ import java.util.Optional;
 public class FoodServiceImpl implements FoodService {
     private final ModelMapper modelMapper;
     private final FoodRepository foodRepository;
+
     private final MemberRepository memberRepository;
 
     @PersistenceContext
@@ -165,7 +166,6 @@ public class FoodServiceImpl implements FoodService {
     public void remove(Long food_id) {
         foodRepository.deleteById(food_id);
     }
-
 
 
 

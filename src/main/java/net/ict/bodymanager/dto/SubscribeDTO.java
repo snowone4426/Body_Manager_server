@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Data
@@ -14,15 +13,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SubscribeDTO {
 
-  private Long sub_id;
+    private Long sub_id;
 
-  private Long member_id;
-  @NotEmpty
-  private LocalDate membership_start;
-  @NotEmpty
-  private LocalDate membership_end;
-  @NotEmpty
-  private LocalDate suit_start;
-  @NotEmpty
-  private LocalDate suit_end;
+    private Long member_id;
+
+    private LocalDate membership_start;
+
+    private LocalDate membership_end;
+
+    private LocalDate suit_start;
+
+    private LocalDate suit_end;
 }
