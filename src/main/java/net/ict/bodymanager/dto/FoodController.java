@@ -1,9 +1,8 @@
-package net.ict.bodymanager.controller;
+package net.ict.bodymanager.dto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.ict.bodymanager.dto.FoodModifyRequestDTO;
-import net.ict.bodymanager.dto.FoodRequestDTO;
 import net.ict.bodymanager.service.FoodService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

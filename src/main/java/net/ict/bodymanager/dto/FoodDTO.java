@@ -1,16 +1,14 @@
 package net.ict.bodymanager.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.ict.bodymanager.entity.Member;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -20,14 +18,21 @@ public class FoodDTO {
   private Long food_id;
 
   private Long member_id;
+
   @NotEmpty
   private String time;
+
   @NotEmpty
   private String content;
+
+  //첨부파일 이름
   @NotEmpty
-  private String food_img;
-  @NotEmpty
+  private List<String> food_img;
+
+  @NotNull
   private int grade;    //default 0
 
-  private LocalDate created_at;
+  private LocalDateTime created_at;
+
+
 }
