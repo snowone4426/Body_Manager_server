@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.ict.bodymanager.dto.MemberDTO;
 import net.ict.bodymanager.entity.Member;
+import net.ict.bodymanager.filter.JwtTokenProvider;
 import net.ict.bodymanager.repository.MemberRepository;
 import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
-
+  private final JwtTokenProvider jwtTokenProvider;
   @Override
   public Long register(MemberDTO memberDTO) {
     Member member = dtoToEntity(memberDTO);
@@ -60,6 +61,7 @@ public class MemberServiceImpl implements MemberService {
     memberRepository.save(member);
   }
 
+  //이메일 찾기
   @Override
   public String findEmail(String phone, String name) {
     String email = memberRepository.findByPhoneAndName(phone,name);
@@ -83,6 +85,13 @@ public class MemberServiceImpl implements MemberService {
     memberRepository.deleteById(member_id);
   }
 
+
+
+  @Override
+  public String infoToToken(String token) {
+
+    return null;
+  }
 
 
 }

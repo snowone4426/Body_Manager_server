@@ -15,6 +15,8 @@ public interface MemberService {
     void modify(MemberDTO memberDTO);
     String findEmail(String phone, String name);
     void remove(Long member_id);
+    String infoToToken(String token);
+
 
     default Member dtoToEntity(MemberDTO memberDTO){
         System.out.println("===========================안녕 dtoToEntity=============================");

@@ -46,6 +46,9 @@ public class Member extends BaseEntity implements UserDetails {
   @ColumnDefault("0")
   private String type;  //0=user, 1=trainer , 2=admin , 3=Uncertified(소셜로그인미인증), 4=dormant(휴면)
 
+  @Column(length = 500, nullable = false)
+  private String profile;
+
   @OneToMany(mappedBy = "member",
           cascade = {CascadeType.ALL},
           fetch = FetchType.LAZY,

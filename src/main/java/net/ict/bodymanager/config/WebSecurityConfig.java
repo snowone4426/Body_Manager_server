@@ -40,10 +40,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션도 사용 x
             .and()
             .authorizeRequests() // 요청에 대한 사용권한 체크
-            .antMatchers("/admin/**").hasRole("ADMIN")
             .antMatchers("/user/**").hasRole("USER")
+            .antMatchers("/user/**").hasRole("UNCERTIFIED")
             .antMatchers("/user/**").hasRole("ADMIN")
+            .antMatchers("/trainer/**").hasRole("TRAINER")
+            .antMatchers("/initial/**").permitAll()
             .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
+            // .anyRequest().authenticated() // 인증을 거친자만 사용 가능
             .and()
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                     UsernamePasswordAuthenticationFilter.class);
