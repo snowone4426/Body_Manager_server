@@ -4,4 +4,6 @@ public interface AccountService {
 
     String MemberInfo();
 
+    String infoList();
+
 }

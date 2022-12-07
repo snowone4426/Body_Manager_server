@@ -22,4 +22,9 @@ public class AccountController {
         return accountService.MemberInfo();
     }
 
+    @GetMapping(value = "/ac2", produces = "application/text;charset=UTF-8")
+    public String priceInfo(){
+        return accountService.infoList();
+    }
+
 }
