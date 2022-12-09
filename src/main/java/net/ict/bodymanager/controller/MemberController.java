@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 @Log4j2
 @RequestMapping("/initial")
+@CrossOrigin("*")
 public class MemberController {
 
   @Value("${net.ict.upload.path}")// import 시에 springframework으로 시작하는 Value
@@ -31,6 +31,8 @@ public class MemberController {
   private final JwtTokenProvider jwtTokenProvider;
   private final MemberRepository memberRepository;
   private final MemberService memberService;
+  private final TokenHandler tokenHandler;
+
 
   // 회원가입
   @PostMapping(value = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -67,9 +69,39 @@ public class MemberController {
     }
   }
 
+  // 로그인 유지
+  @GetMapping("/login")
+  public String isLogin() throws NullPointerException{
+
+    try {
+      JSONObject fir_object = new JSONObject();
+      JSONObject sec_object = new JSONObject();
+      Member member = memberRepository.findByEmail(tokenHandler.getEmailFromToken())
+              .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+
+      String name = member.getName();
+      String profile = member.getProfile();
+      String type = member.getType();
+
+      fir_object.put("message","ok");
+      fir_object.put("data",sec_object);
+      sec_object.put("name",name);
+      sec_object.put("profile",profile);
+      sec_object.put("type",type);
+
+      return fir_object.toString();
+    }
+    catch (NullPointerException e){
+      JSONObject fail = new JSONObject();
+      fail.put("message" , "no auth");
+      return fail.toString();
+    }
+  }
+
   // 로그인
   @PostMapping("/login")
-  public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> user , HttpServletResponse response) {
+  public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> user, HttpServletResponse response) {
+
     Member member = memberRepository.findByEmail(user.get("email"))
             .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
     if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
@@ -77,27 +109,21 @@ public class MemberController {
     }
 
     String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
-    response.setHeader("X-AUTH-TOKEN" , token);   //헤더 "X-AUTH-TOKEN" 에 토큰 값 저장
+    response.setHeader("X-AUTH-TOKEN", token);   //헤더 "X-AUTH-TOKEN" 에 토큰 값 저장
     Cookie cookie = new Cookie("X-AUTH-TOKEN", token);  //쿠키에 저장
-    System.out.println("cookie 넣기 전 value : "+cookie.getValue());
-    System.out.println("cookie 넣기 전 이름 : "+cookie.getName());
+    System.out.println("cookie 넣기 전 value : " + cookie.getValue());
+    System.out.println("cookie 넣기 전 이름 : " + cookie.getName());
 
     cookie.setPath("/");
     cookie.setHttpOnly(true);
     cookie.setSecure(true);
-    cookie.setMaxAge(30*60);
+    cookie.setMaxAge(30 * 60);
     response.addCookie(cookie);
 
-    System.out.println("cookie.getValue() : "+cookie.getValue());
-
-
-    JSONObject object = new JSONObject();
-    JSONObject data = new JSONObject();
-
-
+    System.out.println("cookie.getValue() : " + cookie.getValue());
 
     String token_email = jwtTokenProvider.getUserPk(token);   //토큰에서 이에일 가져옴
-    System.out.println("get-user : "+token_email);
+    System.out.println("get-user : " + token_email);
 
     Map<String, String> result = Map.of("message", "ok");
     return ResponseEntity.ok(result);
@@ -105,15 +131,14 @@ public class MemberController {
 
   //이메일 찾기
   @PostMapping("/findEmail")
-  public String findEmail(@RequestBody Map<String, Object > map){
+  public String findEmail(@RequestBody Map<String, Object> map) {
     return memberService.findEmail(String.valueOf(map.get("phone")), String.valueOf(map.get("name")));
   }
 
 
-
   //로그아웃 *미구현
   @GetMapping("/logout")
-  public void logout(HttpServletResponse response){
+  public void logout(HttpServletResponse response) {
     Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
     cookie.setHttpOnly(true);
     cookie.setSecure(false);
@@ -122,18 +147,9 @@ public class MemberController {
     response.addCookie(cookie);
     System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     System.out.println("로그아웃");
-    System.out.println("cookie.getValue()"+cookie.getValue());
+    System.out.println("cookie.getValue()" + cookie.getValue());
     System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
   }
-
-
-
-
-
-
-
-
-
 
 
 }

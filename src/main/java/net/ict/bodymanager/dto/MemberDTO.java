@@ -38,12 +38,14 @@ public class MemberDTO {
   private String height;
   @NotEmpty
   private String remark;
+  @NotEmpty
+  private String profile;
   @NotNull
   private LocalDate birth;
   private List<String> fileNames;
 
   @NotEmpty
-  private String type; //common, trainer , admin, 미인증, dormant(회원 삭제 시)
+  private String type; //user, trainer , admin, 미인증, dormant(회원 삭제 시)
 //(이메일) 미인증인 사람들은 어떤 권한을 가지고 있냐 : 다 안됨?
 
   private LocalDateTime created_at;

@@ -87,11 +87,4 @@ public class MemberServiceImpl implements MemberService {
 
 
 
-  @Override
-  public String infoToToken(String token) {
-
-    return null;
-  }
-
-
 }
