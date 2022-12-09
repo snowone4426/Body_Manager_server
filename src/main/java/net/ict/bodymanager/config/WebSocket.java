@@ -22,8 +22,8 @@ public class WebSocket implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*") // cors 허용을 위해 꼭 설정해주어야 함. setCredential() 설정시에 AllowedOrigin 과 같이 사용될 경우 오류가 날 수 있으므로 OriginPatterns 설정으로 사용하였음
                 .addInterceptors(new StompHandshakeInterceptor()) // 핸드쉐이크시 인터셉터를 넣을 수 있음
                 .withSockJS()
-                .setDisconnectDelay(30 * 1000)  // 클라이언트가 연결이 끊긴 것으로 간주되는 시간
-                .setClientLibraryUrl("https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"); // 프론트에서 사용하는 sockjs 라이브러리와 동일하게 사용하였음
+                .setDisconnectDelay(30 * 1000);  // 클라이언트가 연결이 끊긴 것으로 간주되는 시간
+//                .setClientLibraryUrl("https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"); // 프론트에서 사용하는 sockjs 라이브러리와 동일하게 사용하였음
     }
 
     @Override

@@ -20,10 +20,10 @@ public class MessageController {
 
     private final MessageService messageService;
 
-
     @MessageMapping("/chat/mes/{roomid}")
     @SendTo("/chat/send/{roomid}")
     public void chat(@DestinationVariable("roomid") Long room_id, @RequestBody Map<String , String> map){
+        log.info("hi");
         messageService.chatRegister(room_id, map.get("content"));
     }
     // @Payload
@@ -41,6 +41,7 @@ public class MessageController {
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String >> roomCreate(@RequestBody Map<String , String> map){
 
+        log.info(map.get("receiver_id"));
         messageService.roomCreate(map.get("receiver_id"));
         Map<String , String> resultMap = Map.of("message", "ok");
         return ResponseEntity.ok(resultMap);
@@ -48,6 +49,10 @@ public class MessageController {
 
     @PostMapping(value = "/content", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "application/text;charset=UTF-8")
     public String chatList(@RequestBody Map<String , String> map){
+
+        log.info(map.get("room_id"));
+        log.info(map.get("offset"));
+        log.info(map.get("limit"));
         return messageService.messageList(map.get("room_id"), map.get("offset"), map.get("limit"));
     }
 

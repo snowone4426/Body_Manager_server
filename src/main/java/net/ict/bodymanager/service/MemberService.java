@@ -4,19 +4,20 @@ package net.ict.bodymanager.service;
 import net.ict.bodymanager.dto.MemberDTO;
 import net.ict.bodymanager.entity.Member;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 public interface MemberService {
+
+
     Long register(MemberDTO memberDTO);
     MemberDTO readOne(Long member_id);
     void modify(MemberDTO memberDTO);
     String findEmail(String phone, String name);
     void remove(Long member_id);
-    String infoToToken(String token);
-
 
     default Member dtoToEntity(MemberDTO memberDTO){
         System.out.println("===========================안녕 dtoToEntity=============================");
@@ -31,9 +32,10 @@ public interface MemberService {
                    .gender(memberDTO.getGender())
                    .height(Double.parseDouble(memberDTO.getHeight()))
                    .remark(memberDTO.getRemark())
+                   .profile(memberDTO.getProfile())
                    .birth(memberDTO.getBirth())
-                   .type("0")
-                   .roles(Collections.singletonList("ROLE_USER"))
+                   .type("admin")
+                   .roles(Collections.singletonList("ROLE_ADMIN"))
                    .build();
 
            System.out.println(member);

@@ -76,7 +76,7 @@ public class InbodyController {
         return inbodyService.bodyChangeFlow();
     }
 
-    @PostMapping(value = "/data")
+    @GetMapping(value = "/data")
     public String todayList(){
         return inbodyService.inbodyList();
     }

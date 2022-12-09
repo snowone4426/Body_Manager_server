@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
   boolean existsByPhone(String phone);
+
   boolean existsByEmail(String email);
 
   @Query("select m.email from Member m where m.phone =:phone and m.name =:name")
@@ -20,7 +21,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
   @EntityGraph(attributePaths = "roles")
   Optional<Member> findByEmail(String email);
-
 
   @EntityGraph(attributePaths = {"imageSet"})
   @Query("select m from Member m where m.member_id =:member_id")
