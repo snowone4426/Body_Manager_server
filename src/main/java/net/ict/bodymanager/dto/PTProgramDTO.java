@@ -27,5 +27,4 @@ public class PTProgramDTO {
   private int count;
   @NotEmpty
   private LocalDateTime pt_date;
-
 }

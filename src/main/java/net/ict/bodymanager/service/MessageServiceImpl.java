@@ -49,6 +49,12 @@ public class MessageServiceImpl implements MessageService {
   public String room_list() {
 
     Long member_id = tokenHandler.getIdFromToken();
+    log.info("member_id" + member_id);
+    if (member_id == null) {
+      JSONObject data = new JSONObject();
+      data.put("message", "insufficuent request data");
+      return data.toString();
+    }
     Optional<Member> id = memberRepository.findById(member_id);
 
     JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
@@ -75,7 +81,7 @@ public class MessageServiceImpl implements MessageService {
     JSONObject data = null;
 
     // 타입이 0일 경우 일반 회원
-    if (id.get().getType().equals("0")) {
+    if (id.get().getType().equals("user")) {
       for (int i = 0; i < roomListTrainer.size(); i++) {
         object = new JSONObject();
         object.put("room_id", roomListTrainer.get(i).toArray()[0]);
@@ -108,6 +114,12 @@ public class MessageServiceImpl implements MessageService {
   public String people_list() {
 
     Long member_id = tokenHandler.getIdFromToken();
+    log.info("member_id" + member_id);
+    if (member_id == null) {
+      JSONObject data = new JSONObject();
+      data.put("message", "insufficuent request data");
+      return data.toString();
+    }
     Optional<Member> id = memberRepository.findById(member_id);
 
     JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
@@ -134,7 +146,7 @@ public class MessageServiceImpl implements MessageService {
     JSONObject data = null;
 
     // 타입이 0일 경우 일반 회원
-    if (id.get().getType().equals("0")) {
+    if (id.get().getType().equals("user")) {
       for (int i = 0; i < trainerList.size(); i++) {
         object = new JSONObject();
         object.put("member_id", trainerList.get(i).toArray()[0]);
@@ -171,7 +183,7 @@ public class MessageServiceImpl implements MessageService {
     Member receiver = memberRepository.getById(Long.valueOf(receiverId));
 
     // 로그인한 회원이 일반회원일 경우 - 메시지를 받는 사람은 트레이너
-    if (id.get().getType().equals("0")) {
+    if (id.get().getType().equals("user")) {
       MessageRoom messageRoom = MessageRoom.builder()
               .createdAt(LocalDateTime.now())
               .memberId(member)   // member 타입으로 넣어줘야함
@@ -201,7 +213,7 @@ public class MessageServiceImpl implements MessageService {
     List<Tuple> chatList = jpaQueryFactory.select(member.name, member.profile, message.content, message.createdAt)
             .from(message)
             .join(message.member, member)
-            .where(message.member.member_id.eq(Long.valueOf((room_id)))).offset(Long.parseLong(offset)).limit(Long.parseLong(limit))
+            .where(message.messageRoom.roomId.eq(Long.valueOf((room_id)))).offset(Long.parseLong(offset)).limit(Long.parseLong(limit))
             .orderBy(message.createdAt.desc())
             .fetch();
 
@@ -221,17 +233,41 @@ public class MessageServiceImpl implements MessageService {
     data.put("data", array);
     data.put("message", "ok");
 
+    log.info(data);
     return data.toString();
   }
 
   @Override
-  public void chatRegister(Long room_id, String content) {
-    Long member_id = tokenHandler.getIdFromToken();
-    Member member = memberRepository.getById(member_id);
 
-    MessageRoom messageRoom = messageRoomRepository.getById(room_id);
-    Message message = dtoTOEntity(messageRoom, content, member);
-    messageRepository.save(message);
+  public void chatRegister(Long room_id, String content, String type) {
+    log.info("챗 리제스터 시작@@@@@@@2");
+//    Long member_id = tokenHandler.getIdFromToken();
+//    log.info("member_id" + member_id);
+
+    JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+    QMessageRoom messageRoom = QMessageRoom.messageRoom;
+    QMember mem = QMember.member;
+
+    List<Tuple> list = jpaQueryFactory
+            .select(messageRoom.memberId.member_id, messageRoom.trainerId.member_id)
+            .from(messageRoom)
+            .where(messageRoom.roomId.eq(room_id))
+            .fetch();
+    log.info(list);
+    log.info(list.get(0).toArray()[1]);
+
+    if (type.equals("trainer")) {
+      Member member = memberRepository.getById(Long.valueOf(list.get(0).toArray()[1].toString()));
+      MessageRoom room = messageRoomRepository.getById(room_id);
+      Message message = dtoTOEntity(room, content, member);
+      messageRepository.save(message);
+    } else {
+      Member member = memberRepository.getById(Long.valueOf(list.get(0).toArray()[0].toString()));
+      MessageRoom room = messageRoomRepository.getById(room_id);
+      Message message = dtoTOEntity(room, content, member);
+      messageRepository.save(message);
+
+    }
 
   }
 

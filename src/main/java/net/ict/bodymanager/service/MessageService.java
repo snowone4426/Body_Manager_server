@@ -16,7 +16,7 @@ public interface MessageService {
 
     String messageList(String room_id, String offset, String limit);
 
-    void chatRegister(Long room_id, String content);
+    void chatRegister(Long room_id, String content, String type);
 
     // 로그인한 회원이 일반회원일 경우
     default Message dtoTOEntity(MessageRoom messageRoom, String content, Member member){

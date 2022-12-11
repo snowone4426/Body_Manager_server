@@ -3,6 +3,7 @@ package net.ict.bodymanager.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PTProgram extends BaseEntity{
+public class PTProgram{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +32,7 @@ public class PTProgram extends BaseEntity{
 
   @Column(nullable = false)
   private int count;
+
+  @Column(nullable = false)
+  private LocalDateTime pt_date;
 }

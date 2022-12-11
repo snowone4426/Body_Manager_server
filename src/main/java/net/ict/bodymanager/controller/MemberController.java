@@ -31,6 +31,7 @@ public class MemberController {
 
   @Value("${net.ict.upload.path}")// import 시에 springframework으로 시작하는 Value
   private String uploadPath;
+
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
   private final MemberRepository memberRepository;
@@ -71,7 +72,7 @@ public class MemberController {
     }
   }
 
-<<<<<<< HEAD
+
   // 로그인 유지
   @GetMapping("/login")
   public String isLogin() throws NullPointerException{
@@ -99,69 +100,103 @@ public class MemberController {
       fail.put("message" , "no auth");
       return fail.toString();
     }
-=======
-  //로그인 유지
-  @GetMapping("/login")
-  public String isLogin(@CookieValue("X-AUTH-TOKEN") String token) {
-    JSONObject fir_object = new JSONObject();
-    JSONObject sec_object = new JSONObject();
-    //토큰이 없을 때
-    if (token.equals("") || token == null) {
-      fir_object.put("message", "not auth");
-      return fir_object.toString();
-    }
-    String email = jwtTokenProvider.getUserPk(token);
-    //일치하는 이메일이 없을 때
-    if (memberRepository.findByEmail(email) == null) {
-      fir_object.put("message", "not auth");
-      return fir_object.toString();
-    }
-    Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
-    String name = member.getName();
-    String profile = member.getProfile();
-    String type = member.getType();
-    fir_object.put("message", "ok");
-    fir_object.put("data", sec_object);
-    sec_object.put("name", name);
-    sec_object.put("profile", profile);
-    sec_object.put("type", type);
 
-    return fir_object.toString();
->>>>>>> 030fe50 ([준영] 로그인 유지 완료)
+  //로그인 유지
+//  //로그인 유지  - 쿠키에서 가져오기
+//  @GetMapping("/login")
+//  public String isLogin(@CookieValue("X-AUTH-TOKEN") String token) {
+//    JSONObject fir_object = new JSONObject();
+//    JSONObject sec_object = new JSONObject();
+//    //토큰이 없을 때
+//    if (token.equals("")) {
+//      fir_object.put("message", "not auth");
+//      return fir_object.toString();
+//    }
+//    String email = jwtTokenProvider.getUserPk(token);
+//    //일치하는 이메일이 없을 때
+//    if (memberRepository.findByEmail(email).isEmpty()) {
+//      fir_object.put("message", "not auth");
+//      return fir_object.toString();
+//    }
+//    Member member = memberRepository.findByEmail(email)
+//            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+//    String name = member.getName();
+//    String profile = member.getProfile();
+//    String type = member.getType();
+//    fir_object.put("message", "ok");
+//    fir_object.put("data", sec_object);
+//    sec_object.put("name", name);
+//    sec_object.put("profile", profile);
+//    sec_object.put("type", type);
+//
+//    return fir_object.toString();
+//  }
+
+  //로그인 유지 - HttpServletRequest 에서 토큰 가져오기
+
+//  @GetMapping("/login")
+//  public String getCookie(HttpServletRequest req) {
+//    JSONObject fir_object = new JSONObject();
+//    JSONObject sec_object = new JSONObject();
+//    Cookie[] cookies = req.getCookies(); // 모든 쿠키 가져오기
+//    log.info("++++++++++++++++++Cookies : " +cookies);
+//    if (cookies != null) {
+//      for (Cookie c : cookies) {
+//        String cookiename = c.getName(); // 쿠키 이름 가져오기
+//        String value = c.getValue(); // 쿠키 값 가져오기
+//        if (cookiename.equals("X-AUTH-TOKEN")) {
+//          String email = jwtTokenProvider.getUserPk(value);
+//          Member member = memberRepository.findByEmail(email)
+//                  .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+//          String name = member.getName();
+//          String profile = member.getProfile();
+//          String type = member.getType();
+//          fir_object.put("message", "ok");
+//          fir_object.put("data", sec_object);
+//          sec_object.put("name", name);
+//          sec_object.put("profile", profile);
+//          sec_object.put("type", type);
+//          return fir_object.toString();
+//        }
+//      }
+//    }
+//
+//    fir_object.put("message", "not auth");
+//    return fir_object.toString();
   }
+
 
   // 로그인
   @PostMapping("/login")
-<<<<<<< HEAD
-  public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> user, HttpServletResponse response) {
-
-    Member member = memberRepository.findByEmail(user.get("email"))
-            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
-    if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
-      throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-    }
-
-    String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
-    response.setHeader("X-AUTH-TOKEN", token);   //헤더 "X-AUTH-TOKEN" 에 토큰 값 저장
-    Cookie cookie = new Cookie("X-AUTH-TOKEN", token);  //쿠키에 저장
-    System.out.println("cookie 넣기 전 value : " + cookie.getValue());
-    System.out.println("cookie 넣기 전 이름 : " + cookie.getName());
-
-    cookie.setPath("/");
-    cookie.setHttpOnly(true);
-    cookie.setSecure(true);
-    cookie.setMaxAge(30 * 60);
-    response.addCookie(cookie);
-
-    System.out.println("cookie.getValue() : " + cookie.getValue());
-
-    String token_email = jwtTokenProvider.getUserPk(token);   //토큰에서 이에일 가져옴
-    System.out.println("get-user : " + token_email);
-
-    Map<String, String> result = Map.of("message", "ok");
-    return ResponseEntity.ok(result);
-=======
+//<<<<<<< HEAD
+//  public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> user, HttpServletResponse response) {
+//
+//    Member member = memberRepository.findByEmail(user.get("email"))
+//            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+//    if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
+//      throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+//    }
+//
+//    String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+//    response.setHeader("X-AUTH-TOKEN", token);   //헤더 "X-AUTH-TOKEN" 에 토큰 값 저장
+//    Cookie cookie = new Cookie("X-AUTH-TOKEN", token);  //쿠키에 저장
+//    System.out.println("cookie 넣기 전 value : " + cookie.getValue());
+//    System.out.println("cookie 넣기 전 이름 : " + cookie.getName());
+//
+//    cookie.setPath("/");
+//    cookie.setHttpOnly(true);
+//    cookie.setSecure(true);
+//    cookie.setMaxAge(30 * 60);
+//    response.addCookie(cookie);
+//
+//    System.out.println("cookie.getValue() : " + cookie.getValue());
+//
+//    String token_email = jwtTokenProvider.getUserPk(token);   //토큰에서 이에일 가져옴
+//    System.out.println("get-user : " + token_email);
+//
+//    Map<String, String> result = Map.of("message", "ok");
+//    return ResponseEntity.ok(result);
+//=======
   public String login(@RequestBody Map<String, String> user, HttpServletResponse response) {
     JSONObject fir_object = new JSONObject();
     JSONObject sec_object = new JSONObject();
@@ -169,7 +204,7 @@ public class MemberController {
     System.out.println("=============================login 시작");
 
     //일치하는 이메일이 없을 때
-    if (memberRepository.findByEmail(user.get("email")) != null) {
+    if (memberRepository.findByEmail(user.get("email")).isPresent()) {
       Member member = memberRepository.findByEmail(user.get("email"))
               .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
       //일치하는 비밀번호가 없을 때
@@ -209,7 +244,6 @@ public class MemberController {
     }
     fir_object.put("message", "not auth");
     return fir_object.toString();
->>>>>>> 030fe50 ([준영] 로그인 유지 완료)
   }
 
   //이메일 찾기
@@ -221,21 +255,19 @@ public class MemberController {
 
   //로그아웃 *미구현
   @GetMapping("/logout")
-<<<<<<< HEAD
-  public void logout(HttpServletResponse response) {
-    Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
-    cookie.setHttpOnly(true);
-    cookie.setSecure(false);
-    cookie.setMaxAge(0);
-    cookie.setPath("/");
-    response.addCookie(cookie);
-    System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    System.out.println("로그아웃");
-    System.out.println("cookie.getValue()" + cookie.getValue());
-=======
+//  public void logout(HttpServletResponse response) {
+//    Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
+//    cookie.setHttpOnly(true);
+//    cookie.setSecure(false);
+//    cookie.setMaxAge(0);
+//    cookie.setPath("/");
+//    response.addCookie(cookie);
+//    System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//    System.out.println("로그아웃");
+//    System.out.println("cookie.getValue()" + cookie.getValue());
   public String logout(@CookieValue("X-AUTH-TOKEN") String token) {
     JSONObject object = new JSONObject();
-    if(token.equals("") || token ==null){
+    if (token.equals("")) {
       object.put("message", "not found");
       return object.toString();
     }
@@ -243,15 +275,9 @@ public class MemberController {
     token = null;
     System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     System.out.println("로그아웃");
-    System.out.println("cookie.getValue()" + token.toString());
->>>>>>> 030fe50 ([준영] 로그인 유지 완료)
     System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     object.put("message", "ok");
     return object.toString();
   }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 030fe50 ([준영] 로그인 유지 완료)
 }

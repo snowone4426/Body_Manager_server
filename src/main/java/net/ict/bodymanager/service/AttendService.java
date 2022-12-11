@@ -6,17 +6,18 @@ import net.ict.bodymanager.entity.Member;
 
 public interface AttendService {
     void register(AttendDTO attendDTO);
-//    void register(Attend attend);
+//    void modify();
+
     String readDay();
-    void modify();
     String readMonth(String year,String month);
 
     default Attend dtoToEntity(AttendDTO attendDTO, Member member){
+        Long member_id = member.getMember_id();
+
         Attend attend = Attend.builder()
                 .member(member)
                 .start_date(attendDTO.getStart_date())
                 .build();
         return attend;
     }
-
 }

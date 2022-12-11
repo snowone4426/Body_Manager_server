@@ -19,6 +19,5 @@ public class FoodModifyRequestDTO {
 //    private List<String> food_img;
 
 
-
 }
 

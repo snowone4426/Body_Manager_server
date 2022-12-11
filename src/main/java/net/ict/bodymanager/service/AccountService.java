@@ -47,7 +47,7 @@ public interface AccountService {
         }
     }
 
-    default OrderInfo dtoToEntityOrderInfo(OrderListDTO.OrderRequestDTO o, Member member){
+    default OrderInfo dtoToEntityOrderInfo(Member member){
 
         OrderInfo orderInfo = OrderInfo.builder()
                 .created_at(LocalDateTime.now())

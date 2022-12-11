@@ -72,6 +72,7 @@ public class InbodyController {
     @Valid
     @GetMapping("/physical")
     public String change(){
+        log.info("---------------------------------------------------------------------------------------------------------");
         return inbodyService.bodyChangeFlow();
     }
 

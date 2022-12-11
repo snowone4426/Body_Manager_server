@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -27,7 +28,7 @@ public class FoodDTO {
 
   //첨부파일 이름
   @NotEmpty
-  private List<String> food_img;
+  private MultipartFile[] files;
 
   @NotNull
   private int grade;    //default 0

@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class FoodRequestDTO {
 
-    private Long food_id;
+    //    private Long food_id;
     private String time;
     private String content;
     private MultipartFile[] food_img;

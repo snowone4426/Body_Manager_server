@@ -159,6 +159,10 @@ public class AccountServiceImpl implements AccountService {
             .where(orderInfo.member.member_id.eq(member.getMember_id()).and(purchase.orderInfo.order_id.eq(orderInfo.order_id)))
             .fetch();
 
+    int total_count = jpaQueryFactory.selectFrom(purchase).join(purchase.orderInfo, orderInfo).where(orderInfo.member.member_id.eq(member.getMember_id())).fetch().size();
+
+    log.info(total_count);
+
     JSONArray orderArr = null;
 
     JSONObject orderObj = null;
@@ -167,9 +171,9 @@ public class AccountServiceImpl implements AccountService {
 
     JSONObject data = new JSONObject();
 
-    for (int i = 0; i < dateList.size(); i++) {
+    for (int i = 0 ; i < dateList.size() ; i++) {
 
-      if (LocalDate.parse(dateList.get(i)).isAfter(LocalDate.parse(count.get(9).toArray()[0].toString())) || LocalDate.parse(dateList.get(i)).isEqual(LocalDate.parse(count.get(9).toArray()[0].toString()))) {
+      if (LocalDate.parse(dateList.get(i)).isAfter(LocalDate.parse(count.get(count.size() -1).toArray()[0].toString())) || LocalDate.parse(dateList.get(i)).isEqual(LocalDate.parse(count.get(count.size() -1).toArray()[0].toString())) ) {
 
         orderArr = new JSONArray();
 
@@ -200,6 +204,7 @@ public class AccountServiceImpl implements AccountService {
         }
       }
     }
+    dateObj.put("total_count", total_count);
     data.put("data", dateObj);
     data.put("message", "ok");
 
@@ -237,6 +242,9 @@ public class AccountServiceImpl implements AccountService {
     JSONObject order_list = new JSONObject(orderListDTO);
     JSONArray array = (JSONArray) order_list.get("order_list");
 
+    OrderInfo orderInfo = dtoToEntityOrderInfo(member);
+    orderRepository.save(orderInfo);
+
     for (int i = 0; i < array.length(); i++) {
       JSONObject result = array.getJSONObject(i);
       String id = result.getString("id");
@@ -252,9 +260,6 @@ public class AccountServiceImpl implements AccountService {
 
       PTInfo ptInfo = ptInfoRepository.getById(Long.valueOf(id));
       Price price = priceRepository.getById(Long.valueOf(id));
-
-      OrderInfo orderInfo = dtoToEntityOrderInfo(o, member);
-      orderRepository.save(orderInfo);
 
       if (type.equals("price")) {
 
@@ -316,9 +321,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
       }
-
     }
-
 
   }
 }

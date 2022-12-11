@@ -74,4 +74,8 @@ public interface FoodService {
 //        return food;
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2b86566 (수정,,)

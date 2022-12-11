@@ -22,20 +22,13 @@ import java.util.Map;
 public class MessageController {
 
     private final MessageService messageService;
-<<<<<<< HEAD
 
-=======
     private final SimpMessagingTemplate template;
->>>>>>> 030fe50 ([준영] 로그인 유지 완료)
     @MessageMapping("/chat/mes/{roomid}")
 //    @SendTo("/chat/send/{roomid}")
     public void chat(@DestinationVariable("roomid") Long room_id, @RequestBody Map<String , String> map){
-<<<<<<< HEAD
-        log.info("hi");
-=======
-        log.info(map.get("content"));
->>>>>>> 030fe50 ([준영] 로그인 유지 완료)
-        messageService.chatRegister(room_id, map.get("content"));
+
+        messageService.chatRegister(room_id, map.get("content"), map.get("type"));
         template.convertAndSend("/sub/chat/send/" + room_id, map.get("content"));
     }
 

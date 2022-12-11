@@ -16,6 +16,7 @@ import java.util.Set;
 @ToString(exclude = "food_img")
 public class Food {
 
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long food_id;
@@ -43,4 +44,5 @@ public class Food {
     this.content=content;
     this.food_img = food_img;
   }
+
 }
