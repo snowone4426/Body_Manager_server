@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"imageSet","roles"})
+@ToString(exclude = "roles")
 public class Member extends BaseEntity implements UserDetails {
 
   @Id
@@ -45,17 +45,8 @@ public class Member extends BaseEntity implements UserDetails {
   @Column(nullable = false)
   private String type;  //0=user, 1=trainer , 2=admin , 3=Uncertified(소셜로그인미인증), 4=dormant(휴면)
 
-  @Column(length = 500, nullable = false)
+  @Column(length = 500)
   private String profile;
-
-  @OneToMany(mappedBy = "member",
-          cascade = {CascadeType.ALL},
-          fetch = FetchType.LAZY,
-          orphanRemoval = true)
-  @Builder.Default
-  @BatchSize(size = 20)
-  private Set<MemberImage> imageSet = new HashSet<>();
-
 
   @ElementCollection(fetch = FetchType.EAGER)
   @Builder.Default
@@ -68,24 +59,9 @@ public class Member extends BaseEntity implements UserDetails {
             .collect(Collectors.toList());
   }
 
-  public void addImage(String uuid, String fileName) {
-    MemberImage memberImage = MemberImage.builder()
-            .uuid(uuid)
-            .fileName(fileName)
-            .member(this)
-            .ord(imageSet.size())
-            .build();
-    imageSet.add(memberImage);
-  }
-
   public void change(String email, String gender) {
     this.email = email;
     this.gender = gender;
-  }
-
-  public void clearImages() {
-    imageSet.forEach(memberImage -> memberImage.changeBoard(null));
-    this.imageSet.clear();
   }
 
   public void changePassword(String password) {

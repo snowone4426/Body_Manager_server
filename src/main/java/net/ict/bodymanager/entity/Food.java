@@ -36,32 +36,11 @@ public class Food {
   @Column(nullable = false)
   private LocalDateTime created_at;
 
-  public void change(String time, String content){
-    this.time = time;
+  @Column(nullable = false)
+  private String food_img;
+
+  public void change(String content, String food_img){
     this.content=content;
-}
-
-  @OneToMany(mappedBy = "food",
-          cascade = {CascadeType.ALL},
-          fetch = FetchType.LAZY,
-          orphanRemoval = true)
-  @Builder.Default
-  @BatchSize(size = 20)
-  private Set<File> food_img = new HashSet<>();
-
-  public void addImage(String file_id, String fileName){
-        File file = File.builder()
-                .file_id(file_id)
-                .fileName(fileName)
-                .food(this)
-                .build();
-        food_img.add(file);
-
-  }
-
-  public void clearImage(){
-      food_img.forEach(file -> file.changeFood(null));
-      this.food_img.clear();
-
+    this.food_img = food_img;
   }
 }

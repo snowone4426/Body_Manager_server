@@ -10,11 +10,15 @@ import net.ict.bodymanager.service.MemberService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -35,15 +39,13 @@ public class MemberController {
 
 
   // 회원가입
-  @PostMapping(value = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, String>> join(@RequestBody MemberDTO memberDTO) {
+  @PostMapping(value = "/join", consumes = {"multipart/form-data"})
+  public String join(@ModelAttribute MemberDTO memberDTO) {
     //비동기 통신으로 받아줘야하니까 @RequestBody를 사용
-    memberService.register(memberDTO);
-    Map<String, String> result = Map.of("message", "ok");
-    return ResponseEntity.ok(result);
+    return memberService.register(memberDTO);
   }
 
-  //이메일 중복체크
+  //이메일 중복확인
   @PostMapping(value = "/emailcheck", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Map<String, String>> emailDuple(@RequestBody Member member) {
     memberRepository.existsByEmail(member.getEmail());
@@ -69,6 +71,7 @@ public class MemberController {
     }
   }
 
+<<<<<<< HEAD
   // 로그인 유지
   @GetMapping("/login")
   public String isLogin() throws NullPointerException{
@@ -96,10 +99,41 @@ public class MemberController {
       fail.put("message" , "no auth");
       return fail.toString();
     }
+=======
+  //로그인 유지
+  @GetMapping("/login")
+  public String isLogin(@CookieValue("X-AUTH-TOKEN") String token) {
+    JSONObject fir_object = new JSONObject();
+    JSONObject sec_object = new JSONObject();
+    //토큰이 없을 때
+    if (token.equals("") || token == null) {
+      fir_object.put("message", "not auth");
+      return fir_object.toString();
+    }
+    String email = jwtTokenProvider.getUserPk(token);
+    //일치하는 이메일이 없을 때
+    if (memberRepository.findByEmail(email) == null) {
+      fir_object.put("message", "not auth");
+      return fir_object.toString();
+    }
+    Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+    String name = member.getName();
+    String profile = member.getProfile();
+    String type = member.getType();
+    fir_object.put("message", "ok");
+    fir_object.put("data", sec_object);
+    sec_object.put("name", name);
+    sec_object.put("profile", profile);
+    sec_object.put("type", type);
+
+    return fir_object.toString();
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
   }
 
   // 로그인
   @PostMapping("/login")
+<<<<<<< HEAD
   public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> user, HttpServletResponse response) {
 
     Member member = memberRepository.findByEmail(user.get("email"))
@@ -127,6 +161,55 @@ public class MemberController {
 
     Map<String, String> result = Map.of("message", "ok");
     return ResponseEntity.ok(result);
+=======
+  public String login(@RequestBody Map<String, String> user, HttpServletResponse response) {
+    JSONObject fir_object = new JSONObject();
+    JSONObject sec_object = new JSONObject();
+
+    System.out.println("=============================login 시작");
+
+    //일치하는 이메일이 없을 때
+    if (memberRepository.findByEmail(user.get("email")) != null) {
+      Member member = memberRepository.findByEmail(user.get("email"))
+              .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+      //일치하는 비밀번호가 없을 때
+      if (!passwordEncoder.matches(user.get("password"), member.getPassword())) {
+        fir_object.put("message", "not auth");
+        return fir_object.toString();
+      }
+      String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles()); //토큰 생성
+      response.setHeader("X-AUTH-TOKEN", token);   //헤더 "X-AUTH-TOKEN" 에 토큰 값 저장하려 했지만 헤더에서 값을 못빼옴 일단 헤더에 넣긴했음
+      ResponseCookie cookie = ResponseCookie.from("X-AUTH-TOKEN", token)  //쿠키에 저장
+              .maxAge(7 * 24 * 60 * 60)
+              .path("/")
+              .secure(true)
+              .sameSite("None")
+              .httpOnly(true)
+              .build();
+      response.setHeader("Set-Cookie", cookie.toString());
+
+      System.out.println("cookie.getName() : " + cookie.getName());
+      System.out.println("cookie.getValue() : " + cookie.getValue());
+
+      String token_email = jwtTokenProvider.getUserPk(token);   //토큰에서 이에일 가져옴
+
+      String name = member.getName();
+      String profile = member.getProfile();
+      String type = member.getType();
+
+      fir_object.put("message", "ok");
+      fir_object.put("data", sec_object);
+      sec_object.put("name", name);
+      sec_object.put("profile", profile);
+      sec_object.put("type", type);
+
+      System.out.println("get-user : " + token_email);
+      System.out.println("=============================login 끝");
+      return fir_object.toString();
+    }
+    fir_object.put("message", "not auth");
+    return fir_object.toString();
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
   }
 
   //이메일 찾기
@@ -138,6 +221,7 @@ public class MemberController {
 
   //로그아웃 *미구현
   @GetMapping("/logout")
+<<<<<<< HEAD
   public void logout(HttpServletResponse response) {
     Cookie cookie = new Cookie("X-AUTH-TOKEN", null);
     cookie.setHttpOnly(true);
@@ -148,8 +232,26 @@ public class MemberController {
     System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     System.out.println("로그아웃");
     System.out.println("cookie.getValue()" + cookie.getValue());
+=======
+  public String logout(@CookieValue("X-AUTH-TOKEN") String token) {
+    JSONObject object = new JSONObject();
+    if(token.equals("") || token ==null){
+      object.put("message", "not found");
+      return object.toString();
+    }
+
+    token = null;
     System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    System.out.println("로그아웃");
+    System.out.println("cookie.getValue()" + token.toString());
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
+    System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    object.put("message", "ok");
+    return object.toString();
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
 }

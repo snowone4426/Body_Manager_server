@@ -66,7 +66,6 @@ public class InbodyController {
     @Valid
     @GetMapping("/analysis")
     public String info(){
-
         return inbodyService.inbodyInfo();
     }
 

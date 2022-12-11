@@ -6,6 +6,8 @@ import net.ict.bodymanager.dto.MemberDTO;
 import net.ict.bodymanager.entity.Member;
 import net.ict.bodymanager.filter.JwtTokenProvider;
 import net.ict.bodymanager.repository.MemberRepository;
+import net.ict.bodymanager.util.LocalUploader;
+import net.ict.bodymanager.util.S3Uploader;
 import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,25 +21,19 @@ public class MemberServiceImpl implements MemberService {
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
+  private final LocalUploader localUploader;
+  private final S3Uploader s3Uploader;
+
+
   @Override
-  public Long register(MemberDTO memberDTO) {
-    Member member = dtoToEntity(memberDTO);
+  public String register(MemberDTO memberDTO) {
+    Member member = dtoToEntity(memberDTO ,localUploader,s3Uploader);
     member.changePassword(passwordEncoder.encode(memberDTO.getPassword()));
     Long member_id = memberRepository.save(member).getMember_id();
 
-    return member_id;
-  }
-  @Override
-  public MemberDTO readOne(Long member_id) {
-
-    //board_image까지 조인 처리되는 findByWithImages()를 이용
-    Optional<Member> result = memberRepository.findByIdWithImages(member_id);
-
-    Member member = result.orElseThrow();
-
-    MemberDTO memberDTO = entityToDTO(member);
-
-    return memberDTO;
+    JSONObject join = new JSONObject();
+    join.put("message", "ok");
+    return join.toString();
   }
 
   @Override
@@ -48,16 +44,6 @@ public class MemberServiceImpl implements MemberService {
     Member member = result.orElseThrow();
 
     member.change(memberDTO.getEmail(), memberDTO.getGender());
-
-    //첨부파일의 처리
-    member.clearImages();
-
-    if (memberDTO.getFileNames() != null) {
-      for (String fileName : memberDTO.getFileNames()) {
-        String[] arr = fileName.split("_");
-        member.addImage(arr[0], arr[1]);
-      }
-    }
     memberRepository.save(member);
   }
 
@@ -84,7 +70,5 @@ public class MemberServiceImpl implements MemberService {
   public void remove(Long member_id) {
     memberRepository.deleteById(member_id);
   }
-
-
 
 }

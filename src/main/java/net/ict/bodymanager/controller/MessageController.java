@@ -2,12 +2,15 @@ package net.ict.bodymanager.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.ict.bodymanager.repository.MessageRepository;
 import net.ict.bodymanager.service.MessageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,14 +22,23 @@ import java.util.Map;
 public class MessageController {
 
     private final MessageService messageService;
+<<<<<<< HEAD
 
+=======
+    private final SimpMessagingTemplate template;
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
     @MessageMapping("/chat/mes/{roomid}")
-    @SendTo("/chat/send/{roomid}")
+//    @SendTo("/chat/send/{roomid}")
     public void chat(@DestinationVariable("roomid") Long room_id, @RequestBody Map<String , String> map){
+<<<<<<< HEAD
         log.info("hi");
+=======
+        log.info(map.get("content"));
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
         messageService.chatRegister(room_id, map.get("content"));
+        template.convertAndSend("/sub/chat/send/" + room_id, map.get("content"));
     }
-    // @Payload
+
 
     @GetMapping(value = "/roomlist"  , produces = "application/text;charset=UTF-8")
     public String roomList(){

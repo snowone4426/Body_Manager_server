@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 //해당 클래스는 JwtTokenProvider가 검증을 끝낸 Jwt로부터 유저 정보를 조회해와서 UserPasswordAuthenticationFilter 로 전달합니다.
@@ -20,6 +21,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    HttpServletResponse response1 = (HttpServletResponse) response;
+    response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+    response1.setHeader("Access-Control-Max-Age", "3600");
+    response1.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Origin,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
+    response1.setHeader("Access-Control-Allow-Credentials",  "true");
+
     // 헤더에서 JWT 를 받아옵니다.
     String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
     // 유효한 토큰인지 확인합니다.
@@ -28,8 +36,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       Authentication authentication = jwtTokenProvider.getAuthentication(token);
       // SecurityContext 에 Authentication 객체를 저장합니다.
       SecurityContextHolder.getContext().setAuthentication(authentication);
-      System.out.println("*******************유효한 토큰************************");
     }
-    chain.doFilter(request, response);
+    chain.doFilter(request, response1);
   }
+
+
+
 }

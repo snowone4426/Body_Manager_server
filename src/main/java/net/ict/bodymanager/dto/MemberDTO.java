@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -38,11 +39,10 @@ public class MemberDTO {
   private String height;
   @NotEmpty
   private String remark;
-  @NotEmpty
-  private String profile;
   @NotNull
-  private LocalDate birth;
-  private List<String> fileNames;
+  private String birth;
+
+  private MultipartFile[] profile;
 
   @NotEmpty
   private String type; //user, trainer , admin, 미인증, dormant(회원 삭제 시)

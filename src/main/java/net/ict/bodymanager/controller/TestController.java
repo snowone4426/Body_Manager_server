@@ -53,4 +53,21 @@ public class TestController {
 
     return member_id;
   }
+
+  @GetMapping("token/test1")
+  public Long tokenCheck1() {
+    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+            .getRequestAttributes()).getRequest();
+
+    System.out.println("헤더에있는 토큰 가져와잇 : " + request.getHeader("X-AUTH-TOKEN"));
+    System.out.println("쿠키에있는 토큰 가져와잇 : " +   request.getCookies());
+    String token = jwtTokenProvider.resolveToken(request);
+    String email = jwtTokenProvider.getUserPk(token);
+    Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException("정보 없음"));
+
+    Long member_id = member.getMember_id();  // member_id 에 토큰에서 뺴온 Long 값 저장
+
+    return member_id;
+  }
 }

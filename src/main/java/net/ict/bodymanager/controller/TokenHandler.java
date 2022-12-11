@@ -4,10 +4,21 @@ import lombok.RequiredArgsConstructor;
 import net.ict.bodymanager.entity.Member;
 import net.ict.bodymanager.filter.JwtTokenProvider;
 import net.ict.bodymanager.repository.MemberRepository;
+<<<<<<< HEAD
+=======
+import org.json.JSONObject;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+<<<<<<< HEAD
+=======
+import javax.servlet.http.Cookie;
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
 import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
@@ -16,7 +27,11 @@ public class TokenHandler {
   private final JwtTokenProvider jwtTokenProvider;
   private final MemberRepository memberRepository;
 
+<<<<<<< HEAD
   public Long getIdFromToken() {
+=======
+  public Long getIdFromToken(){
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
             .getRequestAttributes()).getRequest();
 
@@ -30,6 +45,7 @@ public class TokenHandler {
     return member_id;
   }
 
+<<<<<<< HEAD
   public String getEmailFromToken() {
     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
             .getRequestAttributes()).getRequest();
@@ -41,4 +57,11 @@ public class TokenHandler {
   }
 
 
+=======
+  public Long getCookie(@CookieValue("X-AUTH-TOKEN") String token) {
+    Member member = memberRepository.findByEmail(jwtTokenProvider.getUserPk(token))
+            .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
+    return member.getMember_id();
+  }
+>>>>>>> 030fe50 ([준영] 로그인 유지 완료)
 }
